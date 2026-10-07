@@ -1025,7 +1025,7 @@ final class NotchWindowController {
         let sign: CGFloat = passageEdge == .top || passageEdge == .right ? 1 : -1
         return model.snapshots.enumerated().map { index, snapshot in
             // The cell's middle, which is where it is placed: its ring's, moved
-            // down the stack past a reading under it on a side edge.
+            // along the stack past the reading under or beside it.
             let a = (from.ringCenters[safe: index] ?? 0) + from.cellShift - from.length / 2
             let b = (to.ringCenters[safe: index] ?? 0) + to.cellShift - to.length / 2
             return PassageRing(
@@ -1035,7 +1035,9 @@ final class NotchWindowController {
                                    isRefreshing: model.isRefreshing(snapshot),
                                    weeklyRing: model.weeklyRing,
                                    showsWeeklyReading: model.weeklyReading,
-                                   showsReading: model.showsCellReading),
+                                   showsReading: model.showsCellReading,
+                                   readingBeside: passageEdge.isVertical ? nil
+                                       : model.readingBeside(on: passageEdge)),
                 // The rings are solid: stretching the notch does not move
                 // them off the hand.
                 offset: sign * (a + (b - a) * turned) + back)
@@ -1998,7 +2000,7 @@ final class NotchWindowController {
         guard model.alongWithin(along, of: wing) != nil else { return nil }
         let pitch = model.cellPitch * model.sizeScale
         for index in model.snapshots.indices {
-            let centre = model.ringAlong(index: index, in: wing)
+            let centre = model.cellBandCentre(index: index, in: wing)
             if abs(along - centre) <= pitch / 2 { return index }
         }
         return nil
