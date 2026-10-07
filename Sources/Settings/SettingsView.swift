@@ -849,9 +849,9 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
-                Toggle(L10n.t("Percentage under each ring"),
+                Toggle(L10n.t("Percentage with each ring"),
                        isOn: $preferences.showsNotchReadings)
-                Text(L10n.t("The figure under each ring. Turn it off for rings alone; the number is still a hover away in the card."))
+                Text(L10n.t("The figure under each ring on the sides, beside it on the top and bottom. Turn it off for rings alone; the number is still a hover away in the card."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)

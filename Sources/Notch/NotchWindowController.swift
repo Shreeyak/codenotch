@@ -1999,11 +1999,8 @@ final class NotchWindowController {
         let wing = model.cellWing
         guard model.alongWithin(along, of: wing) != nil else { return nil }
         let pitch = model.cellPitch * model.sizeScale
-        // Centred on the cell, not the ring: across a horizontal edge the
-        // reading beside a ring belongs to that ring's band.
-        let shift = model.edge.isVertical ? 0 : model.cellShift(on: model.edge) * model.sizeScale
         for index in model.snapshots.indices {
-            let centre = model.ringAlong(index: index, in: wing) + shift
+            let centre = model.cellBandCentre(index: index, in: wing)
             if abs(along - centre) <= pitch / 2 { return index }
         }
         return nil

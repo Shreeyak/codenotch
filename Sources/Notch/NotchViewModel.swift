@@ -259,6 +259,13 @@ final class NotchViewModel: ObservableObject {
         wing.lead + ringCenter(index: index) * sizeScale
     }
 
+    /// Where the band that hovers cell `index` is centred along the panel: on
+    /// the whole cell across a horizontal edge, so the reading beside a ring
+    /// belongs to that ring, and on the ring down a side edge.
+    func cellBandCentre(index: Int, in wing: Wing) -> CGFloat {
+        ringAlong(index: index, in: wing) + (edge.isVertical ? 0 : cellShift(on: edge) * sizeScale)
+    }
+
     /// And how far along a copy a point in the panel is, in the notch's own
     /// measurements — nil when the point is not on that copy at all.
     func alongWithin(_ along: CGFloat, of wing: Wing) -> CGFloat? {
@@ -1156,7 +1163,7 @@ final class NotchViewModel: ObservableObject {
 
     private func cellSpacing(cellCount: Int, on edge: NotchEdge? = nil) -> CGFloat {
         let edge = edge ?? self.edge
-        guard edge.isVertical, screenSize.height > 0, cellCount > 1 else {
+        guard screenSize.height > 0, cellCount > 1 else {
             return NotchLayout.cellSpacing
         }
         // Extra model cells spend the gaps first. Reserve the cards actually
@@ -1166,9 +1173,19 @@ final class NotchViewModel: ObservableObject {
                 : contentCardHeight(sessionCap: 0),
             notchScale: sizeScale)
         let packed = NotchLayout.shapeLength(cellCount: cellCount, edge: edge,
-                                             flare: flare, spacing: 0)
+                                             flare: flare, spacing: 0,
+                                             reading: readingBeside(on: edge))
+        // Across the top or bottom the readings beside the rings make the bar
+        // long enough to need this too; beside the display's own notch there
+        // are two bars, either side of the hole, sharing what is left.
+        var room = (edge.isVertical ? screenSize.height : screenSize.width) - 2 * slack
+        var scale = sizeScale
+        if !edge.isVertical, let cutout {
+            room = (room - cutout.width) / 2 - 2 * NotchGeometry.cutoutDeepest
+            scale = requestedScale
+        }
         return min(NotchLayout.cellSpacing,
-                   max(0, ((screenSize.height - 2 * slack) / sizeScale - packed) / CGFloat(cellCount - 1)))
+                   max(0, (room / scale - packed) / CGFloat(cellCount - 1)))
     }
 
     /// A provider with no activity source gets none, rather than borrowing

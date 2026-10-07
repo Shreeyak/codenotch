@@ -709,21 +709,61 @@ final class CellPitchTests: XCTestCase {
         }
     }
 
+    /// A label column per cell makes a horizontal bar longer, and nothing
+    /// squeezes it the way a side stack's gaps are squeezed — so six providers
+    /// with their readings beside them still have to fit a laptop's width at
+    /// every size.
+    @MainActor
+    func testAHorizontalBarWithReadingsBesideItsRingsFitsTheScreenAtEverySize() {
+        let model = NotchViewModel()
+        model.updateSnapshots((0..<6).map { index in
+            ProviderSnapshot(id: "p\(index)", displayName: "P\(index)", glyph: .claude,
+                fidelity: .official, status: .ok,
+                windows: [LimitWindow(id: "w", label: "Session", usedFraction: 0.4)])
+        })
+        model.showsNotchReadings = true
+        model.isExpanded = true
+        model.screenSize = CGSize(width: 1512, height: 982)
+        for pair in [false, true] {
+            model.weeklyRing = pair ? .inside : .off
+            model.weeklyReading = pair
+            for size in NotchSize.allCases {
+                model.sizeScale = size.scale
+                for edge in [NotchEdge.top, .bottom] {
+                    model.edge = edge
+                    XCTAssertLessThanOrEqual(model.panelSize.width, model.screenSize.width,
+                                             "\(edge) \(size) pair \(pair)")
+                }
+            }
+        }
+    }
+
     /// The label beside a ring is part of that ring's hover band: pointing at
     /// "21%" opens that provider's card, not its neighbour's.
     @MainActor
     func testTheLabelBesideARingHoversThatRing() {
-        let controller = NotchWindowController()
-        let model = controller.model
-        model.updateSnapshots(Array(Fixtures.snapshots().prefix(3)))
+        let model = NotchViewModel()
+        // Made-up ids rather than `Fixtures`: a real provider id reaches the
+        // shared cost models, which read this Mac's own logs and change the
+        // card budget under later tests.
+        model.updateSnapshots((0..<3).map { index in
+            ProviderSnapshot(id: "p\(index)", displayName: "P\(index)", glyph: .claude,
+                fidelity: .official, status: .ok,
+                windows: [LimitWindow(id: "w", label: "Session", usedFraction: 0.4)])
+        })
         model.showsNotchReadings = true
         model.isExpanded = true
         for edge in [NotchEdge.top, .bottom] {
             model.edge = edge
+            let wing = model.cellWing
+            let halfBand = model.cellPitch * model.sizeScale / 2
             for index in model.snapshots.indices {
-                let ring = model.slack + model.ringCenter(index: index)
-                let labelEnd = ring + NotchLayout.cellAlong(for: edge) - NotchLayout.ringDiameter / 2 - 1
-                XCTAssertEqual(controller.cellIndex(along: labelEnd), index, "\(edge) cell \(index)")
+                let ring = model.ringAlong(index: index, in: wing)
+                let ringStart = ring - NotchLayout.ringDiameter / 2 * model.sizeScale
+                let labelEnd = ringStart + NotchLayout.cellAlong(for: edge) * model.sizeScale
+                let centre = model.cellBandCentre(index: index, in: wing)
+                XCTAssertLessThanOrEqual(abs(labelEnd - centre), halfBand, "\(edge) cell \(index): label")
+                XCTAssertLessThanOrEqual(abs(ringStart - centre), halfBand, "\(edge) cell \(index): ring")
             }
         }
     }
