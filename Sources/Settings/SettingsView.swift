@@ -875,6 +875,12 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
 
+                Toggle(L10n.t("Disable Live Activity Indicator"), isOn: $preferences.hidesLiveActivity)
+                Text(L10n.t("Disables the turning arc and pulsing indicators for running agents."))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
                 Picker(L10n.t("Show"), selection: $preferences.notchVisibility) {
                     ForEach(NotchVisibility.allCases) { Text($0.title).tag($0) }
                 }
@@ -1037,14 +1043,6 @@ struct SettingsView: View {
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-            }
-
-            Section(L10n.t("Activity")) {
-                Toggle(L10n.t("Show live activity"), isOn: $preferences.showsLiveActivity)
-                Text(L10n.t("The turning arc inside a ring while an agent works, its pulse while one waits on you, and the pulse on the menu bar icon. Turn it off for still rings; the hover card still lists the sessions, and a session ending still notifies as set under Notifications."))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
             }
 
             Section(L10n.t("Usage Limits")) {

@@ -474,7 +474,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             statusItem.limits = preferences.menuBarLimits
             statusItem.resetTimeFormat = preferences.resetTimeFormat
             statusItem.showsWeeklyLimit = preferences.showsWeeklyLimitInMenuBar
-            statusItem.showsLiveActivity = preferences.showsLiveActivity
+            statusItem.hidesLiveActivity = preferences.hidesLiveActivity
 
             preferences.$appPresence
                 .receive(on: RunLoop.main)
@@ -509,12 +509,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             // One switch for both places work is drawn: the arc inside each
             // ring and the pulse on the bar. The sessions themselves still
             // flow, so polling, completion peeks and the hover card are as before.
-            preferences.$showsLiveActivity
+            preferences.$hidesLiveActivity
                 .removeDuplicates()
                 .receive(on: RunLoop.main)
                 .sink { [weak fleet, weak statusItem] in
-                    fleet?.apply(showsLiveActivity: $0)
-                    statusItem?.showsLiveActivity = $0
+                    fleet?.apply(hidesLiveActivity: $0)
+                    statusItem?.hidesLiveActivity = $0
                 }
                 .store(in: &cancellables)
 
@@ -1037,7 +1037,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         fleet.apply(colorTransitionStyle: preferences.colorTransitionStyle)
         fleet.apply(weeklyRing: preferences.weeklyRing)
         fleet.apply(weeklyRingDashed: preferences.weeklyRingDashed)
-        fleet.apply(showsLiveActivity: preferences.showsLiveActivity)
+        fleet.apply(hidesLiveActivity: preferences.hidesLiveActivity)
         fleet.apply(showsNotchReadings: preferences.showsNotchReadings)
         fleet.apply(weeklyReading: preferences.weeklyReading)
         fleet.apply(foldsForFullScreen: preferences.foldsForFullScreen)

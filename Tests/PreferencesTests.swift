@@ -281,6 +281,15 @@ final class PreferencesMigrationTests: XCTestCase {
         XCTAssertEqual(Preferences(defaults: UserDefaults(suiteName: name)!).weeklyRing, .outside)
     }
 
+    func testTheLiveActivityIndicatorIsOnUntilDisabledAndThenSurvivesARelaunch() {
+        let (fresh, name) = makeDefaults()
+        XCTAssertFalse(Preferences(defaults: fresh).hidesLiveActivity)
+
+        Preferences(defaults: fresh).hidesLiveActivity = true
+
+        XCTAssertTrue(Preferences(defaults: UserDefaults(suiteName: name)!).hidesLiveActivity)
+    }
+
     /// The size has to outlive the launch that chose it, or it reads as a
     /// setting that did not take.
     func testTheNotchSizeSurvivesARelaunch() {

@@ -291,12 +291,12 @@ final class Preferences: ObservableObject {
         didSet { defaults.set(weeklyRing.rawValue, forKey: Keys.weeklyRing) }
     }
 
-    /// Whether work in progress is drawn: the spinning and pulsing arc inside a
-    /// ring and the pulse on the menu bar item. Off leaves only the readings
-    /// moving; the hover card still lists the sessions, and a session ending
-    /// still peeks and chimes as Notifications says.
-    @Published var showsLiveActivity: Bool {
-        didSet { defaults.set(showsLiveActivity, forKey: Keys.showsLiveActivity) }
+    /// Stops work in progress being drawn: the turning and pulsing arc inside a
+    /// ring and the pulse on the menu bar item. Only the readings move then;
+    /// the hover card still lists the sessions, and a session ending still
+    /// peeks and chimes as Notifications says. Off by default.
+    @Published var hidesLiveActivity: Bool {
+        didSet { defaults.set(hidesLiveActivity, forKey: Keys.hidesLiveActivity) }
     }
 
 
@@ -554,7 +554,7 @@ final class Preferences: ObservableObject {
         static let weeklyRingDashed = "weeklyRingDashed"
         static let showsNotchReadings = "showsNotchReadings"
         static let weeklyReading = "weeklyReading"
-        static let showsLiveActivity = "showsLiveActivity"
+        static let hidesLiveActivity = "hidesLiveActivity"
         static let claudeDailyPaceRing = "claudeDailyPaceRing"
         static let weeklyHeadline = "weeklyHeadline"
         static let notchSurfaceStyle = "notchSurfaceStyle"
@@ -896,7 +896,7 @@ final class Preferences: ObservableObject {
         self.weeklyRingDashed = defaults.object(forKey: Keys.weeklyRingDashed) as? Bool ?? false
         self.showsNotchReadings = defaults.object(forKey: Keys.showsNotchReadings) as? Bool ?? true
         self.weeklyReading = defaults.object(forKey: Keys.weeklyReading) as? Bool ?? false
-        self.showsLiveActivity = defaults.object(forKey: Keys.showsLiveActivity) as? Bool ?? true
+        self.hidesLiveActivity = defaults.object(forKey: Keys.hidesLiveActivity) as? Bool ?? false
 
         self.weeklyRing = defaults.string(forKey: Keys.weeklyRing)
             .flatMap(WeeklyRing.init(rawValue:)) ?? .off
