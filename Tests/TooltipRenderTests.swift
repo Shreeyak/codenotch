@@ -254,6 +254,42 @@ final class TooltipRenderTests: XCTestCase {
         }
     }
 
+    /// "Hide usage statistics" and "Hide running sessions" leave a card exactly
+    /// as tall as one that never had those parts: the plan name, the account
+    /// activity section and the session list go, and the limits stay.
+    func testTheHoverCardSettingsDrawTheCardWithoutWhatTheyHide() throws {
+        let usage = CodexTokenUsage(
+            summary: .init(lifetimeTokens: 280_000, peakDailyTokens: 150_000,
+                            longestRunningTurnSeconds: 4020,
+                            currentStreakDays: 2, longestStreakDays: 11),
+            dailyUsageBuckets: [.init(startDate: "2026-09-03", tokens: 192_000)]
+        )
+        let windows = [
+            LimitWindow(id: "primary", label: "5h limit", usedFraction: 0),
+            LimitWindow(id: "secondary", label: "Weekly limit", usedFraction: 0.28)
+        ]
+        var full = ProviderSnapshot(id: "codex", displayName: "Codex", glyph: .openai,
+                                    fidelity: .official, status: .ok, windows: windows,
+                                    tokenUsage: usage)
+        full.plan = "prolite"
+        let bare = ProviderSnapshot(id: "codex", displayName: "Codex", glyph: .openai,
+                                    fidelity: .official, status: .ok, windows: windows)
+        let sessions = ActivitySummary(sessions: [
+            AgentSession(id: "s", name: "fix the tests", detail: "Terminal",
+                         state: .busy, waitingFor: nil, since: Date())
+        ])
+        let now = Date()
+        func height(_ card: TooltipCard) throws -> CGFloat {
+            try XCTUnwrap(ImageRenderer(content: card).nsImage).size.height
+        }
+
+        let plain = try height(TooltipCard(snapshot: bare, now: now))
+        XCTAssertGreaterThan(try height(TooltipCard(snapshot: full, activity: sessions, now: now)), plain)
+        XCTAssertEqual(try height(TooltipCard(snapshot: full, activity: sessions, now: now,
+                                              hidesUsageStatistics: true, hidesSessionList: true)),
+                       plain, accuracy: 0.5)
+    }
+
     /// The glass is masked by this one outline, so anything it fails to cover
     /// is a piece of the tooltip left unpainted.
     func testTheSilhouetteIsOneShapeCoveringCardAndTail() {

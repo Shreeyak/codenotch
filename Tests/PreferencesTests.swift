@@ -281,6 +281,20 @@ final class PreferencesMigrationTests: XCTestCase {
         XCTAssertEqual(Preferences(defaults: UserDefaults(suiteName: name)!).weeklyRing, .outside)
     }
 
+    func testTheHoverCardShowsEverythingUntilToldToHideItAndThenSurvivesARelaunch() {
+        let (fresh, name) = makeDefaults()
+        XCTAssertFalse(Preferences(defaults: fresh).hidesUsageStatistics)
+        XCTAssertFalse(Preferences(defaults: fresh).hidesSessionList)
+
+        let preferences = Preferences(defaults: fresh)
+        preferences.hidesUsageStatistics = true
+        preferences.hidesSessionList = true
+
+        let relaunched = Preferences(defaults: UserDefaults(suiteName: name)!)
+        XCTAssertTrue(relaunched.hidesUsageStatistics)
+        XCTAssertTrue(relaunched.hidesSessionList)
+    }
+
     /// The size has to outlive the launch that chose it, or it reads as a
     /// setting that did not take.
     func testTheNotchSizeSurvivesARelaunch() {

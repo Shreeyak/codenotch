@@ -507,12 +507,26 @@ enum NotchLayout {
     /// screen, and the card is drawn at one size whatever the notch is set to —
     /// scaling both halves would reserve room for a card that is never that
     /// big, and at the small end would reserve less than the card needs.
+    ///
+    /// Down a side edge the card hangs from its ring (see `cardHeaderAnchor`),
+    /// but the panel is sized as for a centred card, because it must fit the
+    /// screen it was solved for. A card that does not fit below its ring inside
+    /// that panel is moved up by `NotchViewModel.cardAlong`, as one near the
+    /// screen's foot is.
     static func slack(for edge: NotchEdge,
                       maxCardHeight: CGFloat = defaultMaxCardHeight,
                       notchScale: CGFloat = 1) -> CGFloat {
         edge.isVertical
             ? max(endSlack * notchScale, maxCardHeight / 2 + cardCorner)
             : max(endSlack * notchScale, cardWidth / 2 + cardCorner)
+    }
+
+    /// How far down the card its header's middle sits: the padding, then half
+    /// the glyph-and-title line. Down a side edge the card is placed so this
+    /// line is level with the ring it belongs to — the provider's name beside
+    /// the provider's ring.
+    static var cardHeaderAnchor: CGFloat {
+        cardPadding + max(glyphSize, cardTitleLineHeight) / 2
     }
 
     private static let endSlack = Design.px(190)

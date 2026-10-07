@@ -263,9 +263,12 @@ final class ScreenAnchorRegressionTests: XCTestCase {
                 model.isExpanded = true
                 let length: CGFloat = edge.isVertical ? 300 : NotchLayout.cardWidth
                 let ring = model.ringAlong(index: 0, in: model.cellWing)
-                XCTAssertEqual(model.tooltipAlong(index: 0, length: length), ring)
+                // Down a side edge the card hangs from its ring, header level
+                // with it; across a horizontal one it is centred on the ring.
+                let placed = edge.isVertical ? ring - NotchLayout.cardHeaderAnchor + length / 2 : ring
+                XCTAssertEqual(model.tooltipAlong(index: 0, length: length), placed)
                 // Both ends of the screen: the ring remains on screen, while a
-                // card centred on it would lose its heading or its right edge.
+                // card placed by it would lose its heading or its far edge.
                 for range in [(ring - 45)...(ring + 900), (ring - 900)...(ring + 45)] {
                     model.visibleAlongRange = range
                     let centre = model.tooltipAlong(index: 0, length: length)
@@ -275,8 +278,31 @@ final class ScreenAnchorRegressionTests: XCTestCase {
                     XCTAssertLessThanOrEqual(abs(ring - centre), length / 2 - NotchLayout.tailHeight / 2)
                 }
                 model.visibleAlongRange = (ring - 900)...(ring + 900)
-                XCTAssertEqual(model.tooltipAlong(index: 0, length: length), ring)
+                XCTAssertEqual(model.tooltipAlong(index: 0, length: length), placed)
             }
+        }
+    }
+
+    /// Down a side edge the card's header is level with its ring — the
+    /// provider's name beside the provider's ring — until the card would run
+    /// past the foot of the screen, and then it rises only as far as it must.
+    @MainActor func testASideCardHangsFromItsRingUntilTheScreenEnds() {
+        for edge in [NotchEdge.left, .right] {
+            let model = NotchViewModel()
+            model.edge = edge
+            model.isExpanded = true
+            let length: CGFloat = 300
+            let ring = model.ringAlong(index: 0, in: model.cellWing)
+            model.visibleAlongRange = (ring - 900)...(ring + 900)
+            let top = model.tooltipAlong(index: 0, length: length) - length / 2
+            XCTAssertEqual(top + NotchLayout.cardHeaderAnchor, ring, accuracy: 0.0001,
+                           "\(edge): the header is not level with the ring")
+
+            let foot = ring + 200
+            model.visibleAlongRange = (ring - 900)...foot
+            let bottom = model.tooltipAlong(index: 0, length: length) + length / 2
+            XCTAssertEqual(bottom, foot, accuracy: 0.0001,
+                           "\(edge): the card should rise exactly to the screen's foot")
         }
     }
 }
