@@ -252,8 +252,18 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         redrawArtwork()
     }
 
+    /// Off stops the pulse, and the still badge Reduce Motion draws instead.
+    /// `activeProviderIDs` keeps tracking either way, so switching it back on
+    /// shows whoever is working at that moment.
+    var showsLiveActivity: Bool = true {
+        didSet {
+            guard showsLiveActivity != oldValue else { return }
+            redrawArtwork()
+        }
+    }
+
     private var visibleActiveProviderIDs: Set<String> {
-        guard let summary else { return [] }
+        guard showsLiveActivity, let summary else { return [] }
         return activeProviderIDs.intersection(summary.entries.map(\.id))
     }
 

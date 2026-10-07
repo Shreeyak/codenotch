@@ -448,7 +448,7 @@ struct NotchRootView: View {
         let stack = ForEach(Array(model.snapshots.enumerated()), id: \.element.id) { index, snapshot in
             ProviderCell(
                 snapshot: snapshot,
-                activity: model.activity(for: snapshot),
+                activity: model.ringActivity(for: snapshot),
                 isRefreshing: model.isRefreshing(snapshot),
                 weeklyRing: model.weeklyRing,
                 showsWeeklyReading: model.weeklyReading,

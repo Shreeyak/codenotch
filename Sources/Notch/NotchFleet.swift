@@ -59,6 +59,7 @@ final class NotchFleet {
     /// ring on one display and not another would read as a bug.
     private var weeklyRing: WeeklyRing = .off
     private var weeklyRingDashed: Bool = false
+    private var showsLiveActivity: Bool = true
     private var showsNotchReadings: Bool = true
     private var weeklyReading: Bool = false
     private var foldsForFullScreen = true
@@ -219,6 +220,13 @@ final class NotchFleet {
         self.weeklyRingDashed = weeklyRingDashed
         for controller in controllers.values {
             controller.model.weeklyRingDashed = weeklyRingDashed
+        }
+    }
+
+    func apply(showsLiveActivity: Bool) {
+        self.showsLiveActivity = showsLiveActivity
+        for controller in controllers.values {
+            controller.model.showsLiveActivity = showsLiveActivity
         }
     }
 
@@ -467,6 +475,7 @@ final class NotchFleet {
         controller.model.colorTransitionStyle = colorTransitionStyle
         controller.model.weeklyRing = weeklyRing
         controller.model.weeklyRingDashed = weeklyRingDashed
+        controller.model.showsLiveActivity = showsLiveActivity
         controller.model.showsNotchReadings = showsNotchReadings
         controller.model.weeklyReading = weeklyReading
         controller.model.surfaceStyle = surfaceStyle
