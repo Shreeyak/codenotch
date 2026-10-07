@@ -851,9 +851,7 @@ struct SettingsView: View {
 
                 Toggle(L10n.t("Percentage under each ring"),
                        isOn: $preferences.showsNotchReadings)
-                Text(sizeIsDecidedByTheHardware
-                     ? L10n.t("Merged into your Mac's own notch the bar is exactly as deep as the cutout, so a ring and a percentage under it have to share that depth — showing it draws the rings smaller. Turn it off for the largest rings the cutout has room for.")
-                     : L10n.t("The figure under each ring. Turn it off for rings alone; the number is still a hover away in the card."))
+                Text(L10n.t("The figure under each ring. Turn it off for rings alone; the number is still a hover away in the card."))
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)

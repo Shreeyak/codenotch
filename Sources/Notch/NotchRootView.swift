@@ -452,14 +452,16 @@ struct NotchRootView: View {
                 isRefreshing: model.isRefreshing(snapshot),
                 weeklyRing: model.weeklyRing,
                 showsWeeklyReading: model.weeklyReading,
-                showsReading: model.showsCellReading
+                showsReading: model.showsCellReading,
+                readingBeside: model.edge.isVertical ? nil : model.readingBeside
             )
                 // Pinned to what the cell claims along the stack, or the drawn
                 // rings stop lining up with the centres `ringCenter` hands to
                 // the hover bands and the tooltip tails. Across a horizontal
-                // edge that is the ring alone — the label sits below it, in the
-                // notch's depth, and claims nothing here.
-                .frame(width: model.edge.isVertical ? nil : NotchLayout.cellAlong(for: model.edge))
+                // edge that is the ring and the label's column beside it.
+                .frame(width: model.edge.isVertical ? nil
+                       : NotchLayout.cellAlong(for: model.edge, reading: model.readingBeside),
+                       alignment: .leading)
                 .opacity(model.isExpanded ? 1 : 0)
                 // A short slide toward the edge, no scaling: the clip is
                 // already doing the concealing, and scaling on top of it

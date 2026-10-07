@@ -8,17 +8,14 @@ enum NotchLayout {
     /// either side of it.
     static let sideBodyDepth = Design.px(186)
 
-    /// How deep the notch is, which is **not** the same on every edge.
+    /// How deep the notch is: the same on every edge.
     ///
-    /// Turning the stack is more than a rotation. The percent label sits below
-    /// its ring, so on a side edge it spends the stack's *length* — the ring
-    /// leads the cell and the label follows it down. Turn the stack horizontal
-    /// and the label has nowhere to go but into the notch's *depth*, and 70pt
-    /// no longer fits a ring, a gap and a line of type. So a horizontal notch
-    /// is deeper, and it keeps the frame's margin around the ring to stay
-    /// recognisably the same object.
+    /// The percent label always follows its ring along the stack — below it
+    /// down a side edge, beside it across the top or bottom — so the depth only
+    /// ever holds a ring and its margins, and a horizontal notch is as shallow
+    /// as a side one.
     static func bodyDepth(for edge: NotchEdge) -> CGFloat {
-        edge.isVertical ? sideBodyDepth : 2 * sideRingMargin + cellExtent
+        sideBodyDepth
     }
 
     /// Clear space between the ring and the bezel, from the design frame.
@@ -280,21 +277,34 @@ enum NotchLayout {
     /// Ring plus its percent label.
     static var cellExtent: CGFloat { ringDiameter + ringLabelGap + percentLineHeight }
 
+    /// The column the percent label is given beside its ring, across a
+    /// horizontal edge. Fixed rather than measured from the text so the panel
+    /// geometry can be worked out before SwiftUI lays anything out: a ring's
+    /// width holds "100%" and a local model's figure scaled down to fit, the
+    /// way it is under the ring; the "30%/70%" pair gets the width its widest
+    /// value needs.
+    static func readingBesideWidth(pair: Bool) -> CGFloat {
+        guard pair else { return ringDiameter }
+        let font = NSFont.systemFont(ofSize: Design.fontSize(capPixels: 22), weight: .semibold)
+        return max(ringDiameter, ceil(("100%/100%" as NSString).size(withAttributes: [.font: font]).width))
+    }
+
     /// What one cell claims along the stack.
     ///
     /// Down a side edge, the ring *and the label underneath it*: both are on
-    /// this axis. Across a horizontal one the label has moved into the depth,
-    /// so the cell is the ring alone. Giving the horizontal case the vertical
-    /// figure leaves 27pt of nothing between every pair of rings, on top of the
-    /// spacing the frame already puts there — which is what made the top and
-    /// bottom bars read as far too spread out.
-    static func cellAlong(for edge: NotchEdge) -> CGFloat {
-        edge.isVertical ? cellExtent : ringDiameter
+    /// this axis. Across a horizontal one the label sits beside the ring, so
+    /// the cell is the ring, a gap and `reading` — the label's column, or
+    /// nothing when no label is drawn.
+    static func cellAlong(for edge: NotchEdge,
+                          reading: CGFloat = readingBesideWidth(pair: false)) -> CGFloat {
+        guard !edge.isVertical else { return cellExtent }
+        return reading > 0 ? ringDiameter + ringLabelGap + reading : ringDiameter
     }
 
     /// Ring centre to ring centre.
-    static func cellPitch(for edge: NotchEdge) -> CGFloat {
-        cellAlong(for: edge) + cellSpacing
+    static func cellPitch(for edge: NotchEdge,
+                          reading: CGFloat = readingBesideWidth(pair: false)) -> CGFloat {
+        cellAlong(for: edge, reading: reading) + cellSpacing
     }
 
     /// Padding at the start and the end of the stack.
@@ -320,14 +330,14 @@ enum NotchLayout {
 
     /// Distance from the start of the whole shape to cell `index`'s ring centre.
     ///
-    /// The ring leads its cell on every edge — down a side one the label
-    /// follows it along the stack, across a horizontal one there is nothing
-    /// else on the stack at all.
+    /// The ring leads its cell on every edge — the label follows it along the
+    /// stack, below it down a side edge and beside it across a horizontal one.
     static func ringCenter(index: Int, edge: NotchEdge = .right,
                            flare: CGFloat = curlRadius,
                            spacing: CGFloat = cellSpacing,
-                           cellScale: CGFloat = 1) -> CGFloat {
-        let along = cellAlong(for: edge) * cellScale
+                           cellScale: CGFloat = 1,
+                           reading: CGFloat = readingBesideWidth(pair: false)) -> CGFloat {
+        let along = cellAlong(for: edge, reading: reading) * cellScale
         return flare + padStart(for: edge) + (ringDiameter * cellScale) / 2
             + CGFloat(index) * (along + spacing)
     }
@@ -335,11 +345,12 @@ enum NotchLayout {
     /// Height of the notch body for a given number of provider cells.
     static func bodyLength(cellCount: Int, edge: NotchEdge = .right,
                            spacing: CGFloat = cellSpacing,
-                           cellScale: CGFloat = 1) -> CGFloat {
+                           cellScale: CGFloat = 1,
+                           reading: CGFloat = readingBesideWidth(pair: false)) -> CGFloat {
         let start = padStart(for: edge), end = padEnd(for: edge)
         guard cellCount > 0 else { return start + end }
         return start
-            + CGFloat(cellCount) * cellAlong(for: edge) * cellScale
+            + CGFloat(cellCount) * cellAlong(for: edge, reading: reading) * cellScale
             + CGFloat(cellCount - 1) * spacing
             + end
     }
@@ -361,8 +372,9 @@ enum NotchLayout {
     /// readings — which is exactly what made the top bar look too wide.
     static func shapeLength(cellCount: Int, edge: NotchEdge = .right,
                             flare: CGFloat = curlRadius,
-                            spacing: CGFloat = cellSpacing) -> CGFloat {
-        bodyLength(cellCount: cellCount, edge: edge, spacing: spacing) + 2 * flare
+                            spacing: CGFloat = cellSpacing,
+                            reading: CGFloat = readingBesideWidth(pair: false)) -> CGFloat {
+        bodyLength(cellCount: cellCount, edge: edge, spacing: spacing, reading: reading) + 2 * flare
     }
 
     /// The tooltip's height for a given number of limit windows and live

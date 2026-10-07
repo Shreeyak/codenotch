@@ -407,19 +407,23 @@ final class OrbOnEveryEdgeTests: XCTestCase {
     }
 }
 
-/// Turning the stack is not just a rotation. The percent label sits *below* its
-/// ring, so on a side edge it spends the stack's length and on a horizontal one
-/// it spends the notch's depth — which means the two notches are not the same
-/// shape, and the ring does not sit in the same place within its cell.
+/// Turning the stack is not just a rotation. The percent label follows its
+/// ring along the stack — under it down a side edge, beside it across a
+/// horizontal one — so the depth only ever holds a ring and its margins.
 final class HorizontalCellTests: XCTestCase {
-    /// 70pt of depth fits a 44pt ring and its margins. It does not fit a ring
-    /// *and* the label under it, which is what a horizontal notch has to hold.
-    func testAHorizontalNotchIsDeepEnoughForTheLabelUnderTheRing() {
-        let needed = NotchLayout.ringDiameter
-            + NotchLayout.ringLabelGap
-            + NotchLayout.percentLineHeight
-        XCTAssertGreaterThanOrEqual(NotchLayout.bodyDepth(for: .top), needed)
-        XCTAssertGreaterThanOrEqual(NotchLayout.bodyDepth(for: .bottom), needed)
+    /// A horizontal notch is exactly as shallow as a side one: 70pt, a 44pt
+    /// ring and its margins, with the label beside the ring.
+    func testAHorizontalNotchIsAsShallowAsASideOne() {
+        XCTAssertEqual(NotchLayout.bodyDepth(for: .top), NotchLayout.bodyDepth(for: .right), accuracy: 0.001)
+        XCTAssertEqual(NotchLayout.bodyDepth(for: .bottom), NotchLayout.bodyDepth(for: .right), accuracy: 0.001)
+    }
+
+    /// The label beside the ring gets a column at least a ring wide — room for
+    /// "100%" — and the "30%/70%" pair a wider one.
+    func testTheLabelBesideTheRingHasRoomForItsWidestValue() {
+        XCTAssertGreaterThanOrEqual(NotchLayout.readingBesideWidth(pair: false), NotchLayout.ringDiameter)
+        XCTAssertGreaterThan(NotchLayout.readingBesideWidth(pair: true),
+                             NotchLayout.readingBesideWidth(pair: false))
     }
 
     /// And the side edges keep exactly the depth the design frame fixes, so the
@@ -602,37 +606,38 @@ final class OrbOrientationTests: XCTestCase {
     }
 }
 
-/// A lone ring should sit in the middle of the notch it is alone in.
+/// A lone cell should sit in the middle of the notch it is alone in.
 final class SingleCellBalanceTests: XCTestCase {
+    /// Where cell `index` starts and ends along a horizontal stack: its ring
+    /// leads, its label column follows.
+    private func cellSpan(_ index: Int, edge: NotchEdge) -> (start: CGFloat, end: CGFloat) {
+        let start = NotchLayout.ringCenter(index: index, edge: edge) - NotchLayout.ringDiameter / 2
+        return (start, start + NotchLayout.cellAlong(for: edge))
+    }
+
     /// `padTop` and `padBottom` are not the same number, and down a side edge
     /// they should not be: `padTop` measures the body's top to the first
     /// *ring*, `padBottom` measures the last *label* to the body's foot. They
     /// pad different things.
     ///
-    /// Across a horizontal edge the label has moved off this axis, so both ends
-    /// are padding the same thing — a cell — and carrying the difference over
-    /// just pushes the stack off centre. With four rings it reads as a slightly
-    /// heavy left end; with one it is a ring that is visibly not in the middle.
-    func testALoneRingIsCentredOnAHorizontalEdge() {
+    /// Across a horizontal edge both ends pad the same thing — a cell, ring
+    /// and label side by side — so the two become one number and the cell sits
+    /// in the middle.
+    func testALoneCellIsCentredOnAHorizontalEdge() {
         for edge in [NotchEdge.top, .bottom] {
-            let shape = NotchLayout.shapeLength(
-                cellCount: 1, edge: edge
-            )
-            XCTAssertEqual(
-                NotchLayout.ringCenter(index: 0, edge: edge), shape / 2, accuracy: 0.5,
-                "\(edge): a single ring is off centre"
-            )
+            let shape = NotchLayout.shapeLength(cellCount: 1, edge: edge)
+            let cell = cellSpan(0, edge: edge)
+            XCTAssertEqual((cell.start + cell.end) / 2, shape / 2, accuracy: 0.5,
+                           "\(edge): a single cell is off centre")
         }
     }
 
     /// However many there are, the stack is centred as a block.
     func testTheStackIsCentredForEveryCountOnAHorizontalEdge() {
         for count in 1...5 {
-            let shape = NotchLayout.shapeLength(
-                cellCount: count, edge: .top
-            )
-            let first = NotchLayout.ringCenter(index: 0, edge: .top)
-            let last = NotchLayout.ringCenter(index: count - 1, edge: .top)
+            let shape = NotchLayout.shapeLength(cellCount: count, edge: .top)
+            let first = cellSpan(0, edge: .top).start
+            let last = cellSpan(count - 1, edge: .top).end
             XCTAssertEqual(first, shape - last, accuracy: 0.5,
                            "\(count) cells: the stack is not centred")
         }
@@ -660,45 +665,66 @@ final class SingleCellBalanceTests: XCTestCase {
 
 /// A cell claims what it needs along the stack, and no more.
 ///
-/// Down a side edge that is the ring *and the label underneath it*, because
-/// both are on this axis. Across a horizontal one the label has moved into the
-/// depth, so the cell is the ring alone — and giving it the vertical figure
-/// leaves 27pt of nothing between every pair of rings, on top of the spacing
-/// the frame already puts there. Which is what made the top and bottom bars
-/// read as far too spread out.
+/// Down a side edge that is the ring *and the label underneath it*. Across a
+/// horizontal one it is the ring *and the label beside it* — or the ring alone
+/// when no label is drawn, so a bar of bare rings is not spread out by columns
+/// with nothing in them.
 final class CellPitchTests: XCTestCase {
     func testACellIsTheRingAndItsLabelDownASideEdge() {
         XCTAssertEqual(NotchLayout.cellAlong(for: .right), NotchLayout.cellExtent, accuracy: 0.001)
         XCTAssertEqual(NotchLayout.cellAlong(for: .left), NotchLayout.cellExtent, accuracy: 0.001)
     }
 
-    func testACellIsJustTheRingAcrossAHorizontalOne() {
-        XCTAssertEqual(NotchLayout.cellAlong(for: .top), NotchLayout.ringDiameter, accuracy: 0.001)
-        XCTAssertEqual(NotchLayout.cellAlong(for: .bottom), NotchLayout.ringDiameter, accuracy: 0.001)
+    func testACellIsTheRingAndTheLabelBesideItAcrossAHorizontalOne() {
+        let expected = NotchLayout.ringDiameter + NotchLayout.ringLabelGap
+            + NotchLayout.readingBesideWidth(pair: false)
+        XCTAssertEqual(NotchLayout.cellAlong(for: .top), expected, accuracy: 0.001)
+        XCTAssertEqual(NotchLayout.cellAlong(for: .bottom), expected, accuracy: 0.001)
     }
 
-    /// The gap you actually see between two rings is the frame's own spacing,
-    /// on every edge. Vertically the label fills part of the pitch; horizontally
-    /// nothing does, so the pitch has to be that much shorter.
-    func testTheGapBetweenRingsIsTheFramesSpacingOnEveryEdge() {
+    func testACellIsJustTheRingAcrossAHorizontalOneWithNoLabel() {
+        XCTAssertEqual(NotchLayout.cellAlong(for: .top, reading: 0), NotchLayout.ringDiameter, accuracy: 0.001)
+        XCTAssertEqual(NotchLayout.cellAlong(for: .bottom, reading: 0), NotchLayout.ringDiameter, accuracy: 0.001)
+    }
+
+    /// The gap you actually see between two cells is the frame's own spacing,
+    /// on every edge: from the end of one label to the next ring.
+    func testTheGapBetweenCellsIsTheFramesSpacingOnEveryEdge() {
         for edge in NotchEdge.allCases {
             let pitch = NotchLayout.cellPitch(for: edge)
-            let occupied = edge.isVertical
-                ? NotchLayout.cellExtent          // ring, gap and label, all on this axis
-                : NotchLayout.ringDiameter        // the ring alone
-            XCTAssertEqual(pitch - occupied, NotchLayout.cellSpacing, accuracy: 0.001, "\(edge)")
+            XCTAssertEqual(pitch - NotchLayout.cellAlong(for: edge), NotchLayout.cellSpacing,
+                           accuracy: 0.001, "\(edge)")
         }
     }
 
-    /// Which leaves clear space between adjacent rings of about two thirds of a
-    /// ring — not half as much again as the ring itself.
-    func testAdjacentRingsAreNotFlungApart() {
+    /// Which leaves clear space between one cell's label and the next ring of
+    /// less than a ring — the cells read as a row, not as islands.
+    func testAdjacentCellsAreNotFlungApart() {
         for edge in [NotchEdge.top, .bottom] {
             let clear = NotchLayout.ringCenter(index: 1, edge: edge)
                 - NotchLayout.ringCenter(index: 0, edge: edge)
-                - NotchLayout.ringDiameter
+                - NotchLayout.cellAlong(for: edge)
             XCTAssertLessThan(clear, NotchLayout.ringDiameter,
-                              "\(edge): there is more space between the rings than there is ring")
+                              "\(edge): there is more space between the cells than there is ring")
+        }
+    }
+
+    /// The label beside a ring is part of that ring's hover band: pointing at
+    /// "21%" opens that provider's card, not its neighbour's.
+    @MainActor
+    func testTheLabelBesideARingHoversThatRing() {
+        let controller = NotchWindowController()
+        let model = controller.model
+        model.updateSnapshots(Array(Fixtures.snapshots().prefix(3)))
+        model.showsNotchReadings = true
+        model.isExpanded = true
+        for edge in [NotchEdge.top, .bottom] {
+            model.edge = edge
+            for index in model.snapshots.indices {
+                let ring = model.slack + model.ringCenter(index: index)
+                let labelEnd = ring + NotchLayout.cellAlong(for: edge) - NotchLayout.ringDiameter / 2 - 1
+                XCTAssertEqual(controller.cellIndex(along: labelEnd), index, "\(edge) cell \(index)")
+            }
         }
     }
 

@@ -291,35 +291,55 @@ struct ProviderCell: View {
     /// second line would be drawn in the bezel. The reading is still a hover
     /// away in the card.
     var showsReading: Bool = true
+    /// The column the percentage gets beside the ring, across a horizontal
+    /// edge. Nil puts it under the ring.
+    var readingBeside: CGFloat? = nil
 
     private var reading: ProviderReading {
         ProviderReading(snapshot: snapshot, weeklyRing: weeklyRing,
-                        showsWeeklyReading: showsWeeklyReading)
+                        showsWeeklyReading: showsWeeklyReading,
+                        beside: readingBeside != nil)
     }
 
     private var readingText: String { reading.text }
 
     var body: some View {
-        VStack(spacing: NotchLayout.ringLabelGap) {
-            ProviderRing(
-                usedFraction: snapshot.localModel == nil && snapshot.hasReading ? snapshot.ringFraction : nil,
-                glyph: snapshot.glyph,
-                customIconFilename: snapshot.customIconFilename,
-                isStale: snapshot.status.isStale || !snapshot.hasReading,
-                isBlocked: snapshot.block != nil,
-                activity: activity,
-                isRefreshing: isRefreshing,
-                localPerformance: snapshot.localPerformance,
-                localContextFraction: snapshot.localContextFraction,
-                weeklyFraction: snapshot.hasReading ? snapshot.weeklyFraction : nil,
-                weeklyRing: weeklyRing,
-                bandOverride: snapshot.bandOverride
-            )
-            if showsReading { reading }
+        if let readingBeside {
+            HStack(spacing: NotchLayout.ringLabelGap) {
+                ring
+                if showsReading {
+                    reading.frame(width: readingBeside, alignment: .leading)
+                }
+            }
+            .frame(height: NotchLayout.ringDiameter)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(accessibilityText)
+        } else {
+            VStack(spacing: NotchLayout.ringLabelGap) {
+                ring
+                if showsReading { reading }
+            }
+            .frame(height: NotchLayout.cellExtent)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(accessibilityText)
         }
-        .frame(height: NotchLayout.cellExtent)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(accessibilityText)
+    }
+
+    private var ring: some View {
+        ProviderRing(
+            usedFraction: snapshot.localModel == nil && snapshot.hasReading ? snapshot.ringFraction : nil,
+            glyph: snapshot.glyph,
+            customIconFilename: snapshot.customIconFilename,
+            isStale: snapshot.status.isStale || !snapshot.hasReading,
+            isBlocked: snapshot.block != nil,
+            activity: activity,
+            isRefreshing: isRefreshing,
+            localPerformance: snapshot.localPerformance,
+            localContextFraction: snapshot.localContextFraction,
+            weeklyFraction: snapshot.hasReading ? snapshot.weeklyFraction : nil,
+            weeklyRing: weeklyRing,
+            bandOverride: snapshot.bandOverride
+        )
     }
 
     /// Everything the cell says, as one sentence for VoiceOver and the tests.
@@ -479,6 +499,9 @@ struct ProviderReading: View {
     var across: CGFloat? = nil
     /// Which end of that room it sits at — the Mac's notch's.
     var acrossAlignment: Alignment = .leading
+    /// Beside the ring rather than under it: a local model's figure starts at
+    /// the ring's side instead of centring under it.
+    var beside: Bool = false
 
     /// A dash, not "0%": nothing read is not the same as nothing used.
     var text: String {
@@ -540,7 +563,8 @@ struct ProviderReading: View {
             .minimumScaleFactor(snapshot.localModel == nil ? 1 : 0.5)
             .fixedSize(horizontal: snapshot.localModel == nil, vertical: false)
             .frame(width: snapshot.localModel == nil ? nil : NotchLayout.ringDiameter,
-                   height: NotchLayout.percentLineHeight)
+                   height: NotchLayout.percentLineHeight,
+                   alignment: beside ? .leading : .center)
             .contentTransition(.numericText())
             .animation(NotchMotion.reading, value: text)
     }

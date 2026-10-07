@@ -429,7 +429,8 @@ final class MergesWithTheCutoutTests: XCTestCase {
     /// **Every proportion in it is the design's**, which is what taking one
     /// scale buys over pinning the depth and letting the rest follow a slider.
     /// The contents fit the depth, and the clear space around the ring is the
-    /// frame's own share of it.
+    /// frame's own share of it. The reading sits beside the ring, so across
+    /// the depth the contents are the ring alone either way.
     func testItKeepsTheDesignsProportionsAtTheHardwaresSize() throws {
         let screen = Notched()
         let hole = try hole(screen)
@@ -437,8 +438,7 @@ final class MergesWithTheCutoutTests: XCTestCase {
             let m = model(screen)
             m.showsNotchReadings = reading
             let scale = try XCTUnwrap(m.mergedScale)
-            let cell = (m.showsCellReading ? NotchLayout.cellExtent
-                                           : NotchLayout.ringDiameter) * scale
+            let cell = NotchLayout.ringDiameter * scale
             let clear = NotchLayout.ringMargin(for: .top) * scale
 
             XCTAssertEqual(cell + 2 * clear, hole.depth + NotchRootView.bezelBleed,

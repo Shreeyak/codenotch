@@ -244,7 +244,8 @@ final class NotchViewModel: ObservableObject {
     /// it is while it is in the hand, joined or not a moment before.
     var plainBarLength: CGFloat {
         NotchLayout.shapeLength(cellCount: snapshots.count, edge: edge, flare: flare,
-                                spacing: cellSpacing(cellCount: snapshots.count))
+                                spacing: cellSpacing(cellCount: snapshots.count),
+                                reading: readingBeside)
             * requestedScale
     }
 
@@ -363,15 +364,11 @@ final class NotchViewModel: ObservableObject {
     /// The open depth whether or not the notch is open: folding must not reflow
     /// the stack on its way out, and the shape is what conceals it.
     ///
-    /// Merged into the display's own notch this is what the *cells* need rather
-    /// than what the frame budgets, because the frame's figure reserves room for
-    /// a reading whether or not one is drawn — and here every point of depth is
-    /// spent at a scale the hardware fixes, so reserving depth for something
-    /// that is switched off comes straight off the ring.
+    /// A ring and its margins on every edge, merged into the display's own
+    /// notch or not: the reading sits beside its ring across the top, so it
+    /// costs the ring no depth.
     var contentDepth: CGFloat {
-        guard mergesWithCutout else { return NotchLayout.bodyDepth(for: edge) }
-        return 2 * NotchLayout.ringMargin(for: edge)
-            + (showsCellReading ? NotchLayout.cellExtent : NotchLayout.ringDiameter)
+        NotchLayout.bodyDepth(for: edge)
     }
 
     /// **The scale at which the notch is exactly the Mac's own notch.**
@@ -467,7 +464,8 @@ final class NotchViewModel: ObservableObject {
     func cutoutSpan(cellCount: Int) -> CGFloat {
         guard let cutout else { return shapeLength(cellCount: cellCount) * sizeScale }
         let plain = NotchLayout.shapeLength(cellCount: cellCount, edge: edge, flare: flare,
-                                            spacing: cellSpacing(cellCount: cellCount))
+                                            spacing: cellSpacing(cellCount: cellCount),
+                                            reading: readingBeside)
         return cutout.width - 2 * NotchGeometry.cutoutOverlap
             + 2 * (plain * requestedScale + 2 * NotchGeometry.cutoutDeepest)
     }
@@ -832,23 +830,11 @@ final class NotchViewModel: ObservableObject {
         return shape
     }
 
-    /// **Whether each ring carries its percentage in the strip.**
-    ///
-    /// At the cutout's own depth one ring fills the bar, and a second line
-    /// would be drawn into the bezel — so beside the hardware there is none,
-    /// and the reading is a hover away in the card. Raise the size setting far
-    /// enough and the bar deepens with it; once the reading would come out at
-    /// a legible height it is drawn.
-    ///
-    /// Measured against what the reading *would* be, not against the ring, so
     /// **Whether a cell carries its percentage**, on any edge.
     ///
-    /// One setting, everywhere. Beside the hardware it costs something: a ring
-    /// and its reading need 79pt of depth between them where the cutout gives
-    /// 38, so the reading is paid for out of the ring — which drops from 44pt
-    /// to around 30 at the top of the size range, and smaller below it. That
-    /// is a trade to offer rather than to make, and there is no floor under it:
-    /// asked for, it is drawn, however small the strip leaves it.
+    /// One setting, everywhere. Across the top the reading sits beside its
+    /// ring, so beside the hardware it costs the strip length rather than ring
+    /// size.
     var showsCellReading: Bool {
         showsNotchReadings && !readsAcrossTheCutout
     }
@@ -1130,7 +1116,7 @@ final class NotchViewModel: ObservableObject {
     /// The straight part of the shape, flares excluded.
     var bodyLength: CGFloat {
         NotchLayout.bodyLength(
-            cellCount: snapshots.count, edge: edge, spacing: cellSpacing
+            cellCount: snapshots.count, edge: edge, spacing: cellSpacing, reading: readingBeside
         )
     }
 
@@ -1138,14 +1124,34 @@ final class NotchViewModel: ObservableObject {
     /// included so the readings stay in the middle of the bar.
     func ringCenter(index: Int) -> CGFloat {
         NotchLayout.ringCenter(index: index, edge: edge, flare: leadAllowance,
-                               spacing: cellSpacing)
+                               spacing: cellSpacing, reading: readingBeside)
     }
 
     var cellSpacing: CGFloat { cellSpacing(cellCount: snapshots.count) }
     /// Centre-to-centre distance between cells, which is also the width of the
     /// band `cellIndex(along:)` treats as belonging to one.
     var cellPitch: CGFloat {
-        NotchLayout.cellAlong(for: edge) + cellSpacing
+        NotchLayout.cellAlong(for: edge, reading: readingBeside) + cellSpacing
+    }
+
+    /// The percent label's column beside each ring across a horizontal edge;
+    /// zero down a side edge, where the label is under the ring, and wherever
+    /// no label is drawn.
+    func readingBeside(on edge: NotchEdge) -> CGFloat {
+        guard !edge.isVertical, showsCellReading else { return 0 }
+        return NotchLayout.readingBesideWidth(pair: weeklyReading && weeklyRing != .off)
+    }
+
+    var readingBeside: CGFloat { readingBeside(on: edge) }
+
+    /// How far along the stack a cell's middle is from its ring's centre: the
+    /// label follows the ring, under it down a side edge and beside it across a
+    /// horizontal one. What the hover band and a cell carried round a corner
+    /// are centred on.
+    func cellShift(on edge: NotchEdge) -> CGFloat {
+        guard showsCellReading else { return 0 }
+        let along = NotchLayout.cellAlong(for: edge, reading: readingBeside(on: edge))
+        return (along - NotchLayout.ringDiameter) / 2
     }
 
     private func cellSpacing(cellCount: Int, on edge: NotchEdge? = nil) -> CGFloat {
@@ -1211,16 +1217,18 @@ final class NotchViewModel: ObservableObject {
         let count = snapshots.count
         let spacing = cellSpacing(cellCount: count, on: edge)
         let depth = NotchLayout.bodyDepth(for: edge)
+        let reading = readingBeside(on: edge)
         return TravelSize(
-            length: (NotchLayout.bodyLength(cellCount: count, edge: edge, spacing: spacing)
+            length: (NotchLayout.bodyLength(cellCount: count, edge: edge, spacing: spacing,
+                                            reading: reading)
                      + 2 * flare) * scale,
             depth: depth * scale,
             ringCenters: (0..<count).map {
-                NotchLayout.ringCenter(index: $0, edge: edge, flare: flare, spacing: spacing) * scale
+                NotchLayout.ringCenter(index: $0, edge: edge, flare: flare, spacing: spacing,
+                                       reading: reading) * scale
             },
             ringAcross: depth / 2 * scale,
-            cellShift: edge.isVertical && showsCellReading
-                ? (NotchLayout.cellExtent - NotchLayout.ringDiameter) / 2 * scale : 0)
+            cellShift: cellShift(on: edge) * scale)
     }
 
     var panelSize: CGSize { panelSize(cellCount: snapshots.count) }
@@ -1375,7 +1383,7 @@ final class NotchViewModel: ObservableObject {
     /// the panel is sized for the list that caused the change.
     func shapeLength(cellCount: Int) -> CGFloat {
         NotchLayout.bodyLength(cellCount: cellCount, edge: edge,
-                               spacing: cellSpacing(cellCount: cellCount))
+                               spacing: cellSpacing(cellCount: cellCount), reading: readingBeside)
             + leadAllowance + endAllowance
     }
 
