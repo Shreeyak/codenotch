@@ -148,6 +148,35 @@ final class NotchRenderTests: XCTestCase {
                              "an empty week drew nothing at all")
     }
 
+    /// Disabling the live activity indicator takes the arc out of the ring,
+    /// and leaves the reading exactly as an idle notch draws it.
+    ///
+    /// Measured on a session waiting on you: its pulse is the amber activity
+    /// circle, which `colouredFraction` can see. The working arc is a layer
+    /// `ImageRenderer` does not draw, so it would measure nothing.
+    func testTheLiveActivityIndicatorPaintsOnlyUntilDisabled() {
+        func colour(waiting: Bool, hidden: Bool) -> Double {
+            let model = model(edge: .right)
+            model.hidesLiveActivity = hidden
+            if waiting {
+                for snapshot in model.snapshots {
+                    model.sessions[snapshot.providerID] = [
+                        AgentSession(id: snapshot.id, name: "s", detail: "Terminal",
+                                     state: .waiting, waitingFor: nil, since: Date())
+                    ]
+                }
+            }
+            guard let rep = render(model) else { return -1 }
+            return colouredFraction(rep)
+        }
+
+        let idle = colour(waiting: false, hidden: false)
+        XCTAssertGreaterThan(idle, 0, "the headline arc is missing too — this measures nothing")
+        XCTAssertGreaterThan(colour(waiting: true, hidden: false), idle, "the waiting pulse painted nothing")
+        XCTAssertEqual(colour(waiting: true, hidden: true), idle, accuracy: 0.0001,
+                       "disabled, the ring still drew the activity")
+    }
+
     /// Fraction of sampled pixels that are the ring track's own grey — the way
     /// to see a track, which carries no hue and so is invisible to
     /// `colouredFraction`.

@@ -291,6 +291,14 @@ final class Preferences: ObservableObject {
         didSet { defaults.set(weeklyRing.rawValue, forKey: Keys.weeklyRing) }
     }
 
+    /// Stops work in progress being drawn: the turning and pulsing arc inside a
+    /// ring and the pulse on the menu bar item. Only the readings move then;
+    /// the hover card still lists the sessions, and a session ending still
+    /// peeks and chimes as Notifications says. Off by default.
+    @Published var hidesLiveActivity: Bool {
+        didSet { defaults.set(hidesLiveActivity, forKey: Keys.hidesLiveActivity) }
+    }
+
 
     /// The colour used for positive usage and active-work indicators.
     @Published var accentColor: AccentColorChoice {
@@ -546,6 +554,7 @@ final class Preferences: ObservableObject {
         static let weeklyRingDashed = "weeklyRingDashed"
         static let showsNotchReadings = "showsNotchReadings"
         static let weeklyReading = "weeklyReading"
+        static let hidesLiveActivity = "hidesLiveActivity"
         static let claudeDailyPaceRing = "claudeDailyPaceRing"
         static let weeklyHeadline = "weeklyHeadline"
         static let notchSurfaceStyle = "notchSurfaceStyle"
@@ -887,6 +896,7 @@ final class Preferences: ObservableObject {
         self.weeklyRingDashed = defaults.object(forKey: Keys.weeklyRingDashed) as? Bool ?? false
         self.showsNotchReadings = defaults.object(forKey: Keys.showsNotchReadings) as? Bool ?? true
         self.weeklyReading = defaults.object(forKey: Keys.weeklyReading) as? Bool ?? false
+        self.hidesLiveActivity = defaults.object(forKey: Keys.hidesLiveActivity) as? Bool ?? false
 
         self.weeklyRing = defaults.string(forKey: Keys.weeklyRing)
             .flatMap(WeeklyRing.init(rawValue:)) ?? .off

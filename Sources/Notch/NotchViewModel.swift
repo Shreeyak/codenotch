@@ -207,6 +207,8 @@ final class NotchViewModel: ObservableObject {
     @Published var weeklyRing: WeeklyRing = .off
     @Published var weeklyRingDashed: Bool = false
     @Published var weeklyReading: Bool = false
+    /// Whether a ring leaves out the work going on behind it. See `ringActivity(for:)`.
+    @Published var hidesLiveActivity: Bool = false
     @Published var watchLimit: Double = 0.50
     @Published var criticalLimit: Double = 0.70
     /// Mirrored from Settings like `surfaceStyle`, just below.
@@ -1181,6 +1183,15 @@ final class NotchViewModel: ObservableObject {
 
     func activity(for providerID: String) -> ActivitySummary? {
         ActivitySummary(sessions: sessions[providerID] ?? [])
+    }
+
+    /// What a ring draws of `activity(for:)`: all of it, or nothing while the
+    /// live activity indicator is disabled. Nothing rather than an idle
+    /// summary, so an inside weekly ring stays put instead of giving way to the
+    /// arc it would otherwise make room for. The hover card asks
+    /// `activity(for:)` and keeps its session list either way.
+    func ringActivity(for snapshot: ProviderSnapshot) -> ActivitySummary? {
+        hidesLiveActivity ? nil : activity(for: snapshot)
     }
 
     var hoveredSnapshot: ProviderSnapshot? {
