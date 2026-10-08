@@ -1259,7 +1259,8 @@ final class NotchViewModel: ObservableObject {
                                            windowCount: NotchLayout.maxWindowCount,
                                            hasTokenUsage: hasTokenUsage,
                                            hasPlan: hasPlan,
-                                           hasResetCredits: hasResetCredits)
+                                           hasResetCredits: hasResetCredits,
+                                           costRows: snapshots.map(costRows(for:)).max() ?? 0)
     }
 
     /// Project rows a card may list: the ones the cost model has, capped at

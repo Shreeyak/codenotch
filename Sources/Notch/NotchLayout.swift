@@ -543,7 +543,8 @@ enum NotchLayout {
                                 groupCount: Int = 2,
                                 hasTokenUsage: Bool = false,
                                 hasPlan: Bool = false,
-                                hasResetCredits: Bool = false) -> Int {
+                                hasResetCredits: Bool = false,
+                                costRows: Int = 0) -> Int {
         var fits = 0
         for n in 1...sessionCeiling {
             // Costed as though something were still hidden, so that admitting
@@ -552,7 +553,8 @@ enum NotchLayout {
             let height = cardHeight(windowCount: windowCount, groupCount: groupCount,
                                     sessionCount: n + 1, sessionCap: n,
                                     hasTokenUsage: hasTokenUsage, hasPlan: hasPlan,
-                                    hasResetCredits: hasResetCredits)
+                                    hasResetCredits: hasResetCredits,
+                                    costRows: costRows)
             guard height <= cardBudget else { break }
             fits = n
         }

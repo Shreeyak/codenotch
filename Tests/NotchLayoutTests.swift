@@ -1181,6 +1181,25 @@ final class SessionCapTests: XCTestCase {
         }
     }
 
+    /// A provider's per-project cost rows sit in the same card as its
+    /// sessions, so they must be paid for before any session row is: a card
+    /// that admits sessions as though the cost rows were absent outgrows its
+    /// budget the moment the cost history finishes loading.
+    func testCostRowsAreChargedBeforeAnySessionIsAdmitted() {
+        for budget in stride(from: CGFloat(150), through: 1200, by: 37) {
+            let n = NotchLayout.sessionsFitting(cardBudget: budget,
+                                                windowCount: NotchLayout.maxWindowCount,
+                                                costRows: 5)
+            guard n > 0 else { continue }
+            let height = NotchLayout.cardHeight(windowCount: NotchLayout.maxWindowCount,
+                                                groupCount: 2,
+                                                sessionCount: n + 1, sessionCap: n,
+                                                costRows: 5)
+            XCTAssertLessThanOrEqual(height, budget,
+                                     "\(n) rows and five cost rows were admitted into \(budget)pt but do not fit")
+        }
+    }
+
     func testMoreRoomNeverListsFewer() {
         var last = 0
         for budget in stride(from: CGFloat(100), through: 1400, by: 11) {
