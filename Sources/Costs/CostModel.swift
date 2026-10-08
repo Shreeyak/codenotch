@@ -52,8 +52,13 @@ final class CostModel: ObservableObject {
     init(account: CostAccount) {
         self.account = account
         isExpanded = UserDefaults.standard.bool(forKey: Self.expandedKey)
-        let saved = CostRange(rawValue: UserDefaults.standard.string(forKey: Self.rangeKey) ?? "") ?? .session
-        range = saved == .allTime ? .month : saved
+        // Only a range the card has a tab for. The card draws nothing while
+        // its range is empty, so starting on one it cannot switch away from
+        // (the five-hour session, idle between bursts) would hide the section
+        // for good. A plan with no rolling limit moves to the month on its
+        // first poll.
+        let saved = CostRange(rawValue: UserDefaults.standard.string(forKey: Self.rangeKey) ?? "")
+        range = saved.flatMap { CostSection.tabs.contains($0) ? $0 : nil } ?? .weekly
 
         // One database and one transcript watcher per account; the default
         // account keeps the original file name so history carries over.

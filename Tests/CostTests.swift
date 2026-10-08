@@ -46,12 +46,21 @@ final class CostTests: XCTestCase {
         XCTAssertEqual(api.cost(at: 10, weight: 1, model: "claude-opus-5", input: 1_000_000, output: 1_000_000, cacheRead: 0, cacheWrite: 0) ?? 0, 150, accuracy: 0.01)
     }
 
-    /// The card's range follows the account's allowance, never "all time".
-    @MainActor func testCostRangeNeverStartsOnAllTime() {
-        UserDefaults.standard.set("allTime", forKey: "costRange")
+    /// The card only opens on a range it has a tab for: an idle five-hour
+    /// session is empty, and an empty range hides the whole section, tabs
+    /// included, so nothing could switch it back.
+    @MainActor func testCostRangeOnlyStartsOnARangeTheCardHasATabFor() {
+        // The test host shares the app's defaults domain: put back whatever
+        // the installed app had saved, or every run resets the user's tab.
+        let saved = UserDefaults.standard.object(forKey: "costRange")
+        defer { UserDefaults.standard.set(saved, forKey: "costRange") }
         let account = CostAccount(id: "test-x", provider: "claude", name: "Test", configDirectory: URL(fileURLWithPath: "/nonexistent"))
-        let model = CostModel(account: account)
-        XCTAssertNotEqual(model.range, .allTime)
-        UserDefaults.standard.removeObject(forKey: "costRange")
+
+        for (stored, expected) in [("allTime", CostRange.weekly), ("session", .weekly),
+                                   (nil, .weekly), ("today", .today), ("month", .month)] as [(String?, CostRange)] {
+            UserDefaults.standard.set(stored, forKey: "costRange")
+            XCTAssertEqual(CostModel(account: account).range, expected,
+                           "a saved \(stored ?? "nothing") opened on the wrong tab")
+        }
     }
 }

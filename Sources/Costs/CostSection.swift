@@ -69,11 +69,5 @@ struct CostSection: View {
                 }
             }
         }
-        .onAppear {
-            // Opens on the allowance window when the account has one, else the
-            // month; the tabs take it from there.
-            guard !Self.tabs.contains(model.range) else { return }
-            model.range = model.quotaBacked ? .weekly : .month
-        }
     }
 }
