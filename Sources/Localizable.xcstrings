@@ -40944,59 +40944,6 @@
         }
       }
     },
-    "Show Spark and code review": {
-      "extractionState": "manual",
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spark とコードレビューを表示"
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Показувати Spark і перевірку коду"
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "显示 Spark 和代码审查"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "顯示 Spark 與程式碼審查"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spark 및 코드 리뷰 표시"
-          }
-        },
-        "uz": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spark va kod koʻrigini koʻrsatish"
-          }
-        },
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tampilkan Spark dan tinjauan kode"
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Spark ve kod incelemesini göster"
-          }
-        }
-      }
-    },
     "Show move handle": {
       "extractionState": "manual",
       "localizations": {
@@ -41205,59 +41152,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tam ekran bir uygulama öndeyken çentik gizlenir, ondan çıktığınızda geri gelir. Kapalı seçilirse tam ekran uygulamaların üzerinde yerinde kalır."
-          }
-        }
-      }
-    },
-    "The ring still follows the main Codex window. Spark and code review stay in the hover card.": {
-      "extractionState": "manual",
-      "localizations": {
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "リングは引き続き Codex のメインウインドウに従います。Spark とコードレビューはホバーカードに表示されます。"
-          }
-        },
-        "uk": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Кільце й далі стежить за основним вікном ліміту Codex. Spark і перевірка коду лишаються в картці при наведенні."
-          }
-        },
-        "zh-Hans": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "圆环仍跟着 Codex 的主窗口。Spark 和代码审查留在提示卡里。"
-          }
-        },
-        "zh-Hant": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "圓環仍會跟隨主要的 Codex 視窗。Spark 與程式碼審查留在懸停卡裡。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "링은 계속 Codex의 기본 집계 기간을 따릅니다. Spark와 코드 리뷰는 호버 카드에 표시합니다."
-          }
-        },
-        "uz": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Halqa baribir asosiy Codex oynasiga ergashadi. Spark va kod koʻrigi maslahat kartasida qoladi."
-          }
-        },
-        "id": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ring tetap mengikuti jendela utama Codex. Spark dan tinjauan kode tetap berada di kartu hover."
-          }
-        },
-        "tr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Halka yine ana Codex penceresini izler. Spark ve kod incelemesi, üzerine gelince açılan kartta kalır."
           }
         }
       }
