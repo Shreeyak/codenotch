@@ -323,30 +323,6 @@ final class CodexUsageTests: XCTestCase {
         XCTAssertEqual(result.map(\.usedFraction), [0.25, 0.10, 0.40, 0.12])
     }
 
-    /// Hiding extras must drop Spark and code review rather than leaving an
-    /// empty success when those were the only windows.
-    func testHidingExtrasDropsSparkAndCodeReview() throws {
-        let json = """
-        {"rate_limit":{
-          "primary_window":{"used_percent":25,"limit_window_seconds":18000},
-          "secondary_window":{"used_percent":10,"limit_window_seconds":604800}},
-         "additional_rate_limits":[{"limit_name":"Spark","rate_limit":{
-          "primary_window":{"used_percent":99,"limit_window_seconds":18000}}}],
-         "code_review_rate_limit":{"primary_window":{"used_percent":90,"limit_window_seconds":604800}}}
-        """
-        let hidden = try CodexUsage.windows(
-            from: Data(json.utf8), now: Date(timeIntervalSince1970: 1_800_000_000),
-            includeExtras: false
-        )
-        XCTAssertEqual(hidden.map(\.id), ["primary", "secondary"])
-        XCTAssertThrowsError(try CodexUsage.windows(
-            from: Data("""
-            {"additional_rate_limits":[{"limit_name":"Spark","rate_limit":{
-              "primary_window":{"used_percent":40,"limit_window_seconds":18000}}}]}
-            """.utf8), includeExtras: false
-        ))
-    }
-
     func testDecodesProfileTokenUsageAndBuildsAThirtyDaySeries() throws {
         let json = """
         {"profile":{"display_name":"Test"},

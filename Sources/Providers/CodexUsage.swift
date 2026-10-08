@@ -271,8 +271,7 @@ enum CodexUsage {
         }
     }
 
-    static func windows(from data: Data, now: Date = Date(),
-                        includeExtras: Bool = true) throws -> [LimitWindow] {
+    static func windows(from data: Data, now: Date = Date()) throws -> [LimitWindow] {
         let response: Response
         do {
             response = try JSONDecoder().decode(Response.self, from: data)
@@ -296,26 +295,24 @@ enum CodexUsage {
         // same ids twice: the tooltip ForEach, the archive, and Phone Link
         // all key windows by id, and a duplicate 5h row is what reads as a
         // second session limit.
-        if includeExtras {
-            for extra in response.additional_rate_limits where isSpark(extra) {
-                appendExtra(
-                    extra.rate_limit,
-                    primaryID: "spark",
-                    secondaryID: "spark-secondary",
-                    group: L10n.t("Spark"),
-                    now: now,
-                    to: &windows
-                )
-            }
+        for extra in response.additional_rate_limits where isSpark(extra) {
             appendExtra(
-                response.code_review_rate_limit,
-                primaryID: "code-review",
-                secondaryID: "code-review-secondary",
-                group: L10n.t("Code review"),
+                extra.rate_limit,
+                primaryID: "spark",
+                secondaryID: "spark-secondary",
+                group: L10n.t("Spark"),
                 now: now,
                 to: &windows
             )
         }
+        appendExtra(
+            response.code_review_rate_limit,
+            primaryID: "code-review",
+            secondaryID: "code-review-secondary",
+            group: L10n.t("Code review"),
+            now: now,
+            to: &windows
+        )
         // No rolling windows at all: a credit-based seat. Its cap is the ring.
         if windows.isEmpty, let credit = response.spend_control?.individual_limit,
            let pct = credit.used_percent {

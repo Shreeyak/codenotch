@@ -76,10 +76,7 @@ actor CodexLocalProvider: UsageProvider {
         // extras payload cannot skip the credits row.
         async let resetCredits = Self.fetchResetCredits(session: session, credential: credential)
 
-        let windows = try CodexUsage.windows(
-            from: data,
-            includeExtras: Preferences.storedShowCodexExtraLimits()
-        )
+        let windows = try CodexUsage.windows(from: data)
 
         // The profile page's token statistics are the source for the chart and
         // totals.
