@@ -261,13 +261,14 @@ final class NotchWindowController {
         // changes the tallest card, which the panel's room past each end of a
         // side stack is sized from. On the run loop for the same reason as the
         // snapshots.
-        Publishers.Merge4(
+        Publishers.Merge5(
             model.$weeklyRing.removeDuplicates().map { _ in () },
             model.$weeklyReading.removeDuplicates().map { _ in () },
             model.$hidesUsageStatistics.removeDuplicates().map { _ in () },
-            model.$hidesSessionList.removeDuplicates().map { _ in () }
+            model.$hidesSessionList.removeDuplicates().map { _ in () },
+            model.$hidesProjectCosts.removeDuplicates().map { _ in () }
         )
-        .dropFirst(4)
+        .dropFirst(5)
         .receive(on: RunLoop.main)
         .sink { [weak self] in
             self?.relocate()

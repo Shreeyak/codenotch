@@ -294,14 +294,17 @@ final class PreferencesMigrationTests: XCTestCase {
         let (fresh, name) = makeDefaults()
         XCTAssertFalse(Preferences(defaults: fresh).hidesUsageStatistics)
         XCTAssertFalse(Preferences(defaults: fresh).hidesSessionList)
+        XCTAssertFalse(Preferences(defaults: fresh).hidesProjectCosts)
 
         let preferences = Preferences(defaults: fresh)
         preferences.hidesUsageStatistics = true
         preferences.hidesSessionList = true
+        preferences.hidesProjectCosts = true
 
         let relaunched = Preferences(defaults: UserDefaults(suiteName: name)!)
         XCTAssertTrue(relaunched.hidesUsageStatistics)
         XCTAssertTrue(relaunched.hidesSessionList)
+        XCTAssertTrue(relaunched.hidesProjectCosts)
     }
 
     /// The size has to outlive the launch that chose it, or it reads as a

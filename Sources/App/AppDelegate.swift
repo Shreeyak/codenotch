@@ -673,6 +673,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 .sink { [weak fleet] in fleet?.apply(hidesSessionList: $0) }
                 .store(in: &cancellables)
 
+            preferences.$hidesProjectCosts
+                .receive(on: RunLoop.main)
+                .sink { [weak fleet] in fleet?.apply(hidesProjectCosts: $0) }
+                .store(in: &cancellables)
+
             preferences.$weeklyReading
                 .receive(on: RunLoop.main)
                 .sink { [weak fleet] in fleet?.apply(weeklyReading: $0) }
@@ -1050,6 +1055,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         fleet.apply(hidesLiveActivity: preferences.hidesLiveActivity)
         fleet.apply(hidesUsageStatistics: preferences.hidesUsageStatistics)
         fleet.apply(hidesSessionList: preferences.hidesSessionList)
+        fleet.apply(hidesProjectCosts: preferences.hidesProjectCosts)
         fleet.apply(showsNotchReadings: preferences.showsNotchReadings)
         fleet.apply(weeklyReading: preferences.weeklyReading)
         fleet.apply(foldsForFullScreen: preferences.foldsForFullScreen)

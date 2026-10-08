@@ -62,6 +62,7 @@ final class NotchFleet {
     private var hidesLiveActivity: Bool = false
     private var hidesUsageStatistics: Bool = false
     private var hidesSessionList: Bool = false
+    private var hidesProjectCosts: Bool = false
     private var showsNotchReadings: Bool = true
     private var weeklyReading: Bool = false
     private var foldsForFullScreen = true
@@ -243,6 +244,13 @@ final class NotchFleet {
         self.hidesSessionList = hidesSessionList
         for controller in controllers.values {
             controller.model.hidesSessionList = hidesSessionList
+        }
+    }
+
+    func apply(hidesProjectCosts: Bool) {
+        self.hidesProjectCosts = hidesProjectCosts
+        for controller in controllers.values {
+            controller.model.hidesProjectCosts = hidesProjectCosts
         }
     }
 
@@ -494,6 +502,7 @@ final class NotchFleet {
         controller.model.hidesLiveActivity = hidesLiveActivity
         controller.model.hidesUsageStatistics = hidesUsageStatistics
         controller.model.hidesSessionList = hidesSessionList
+        controller.model.hidesProjectCosts = hidesProjectCosts
         controller.model.showsNotchReadings = showsNotchReadings
         controller.model.weeklyReading = weeklyReading
         controller.model.surfaceStyle = surfaceStyle
