@@ -209,6 +209,10 @@ final class NotchViewModel: ObservableObject {
     @Published var weeklyReading: Bool = false
     /// Whether a ring leaves out the work going on behind it. See `ringActivity(for:)`.
     @Published var hidesLiveActivity: Bool = false
+    /// Mirrored from Settings: what the hover card leaves out. Every card
+    /// height budget reads these too, so the hover region matches the card.
+    @Published var hidesUsageStatistics: Bool = false
+    @Published var hidesSessionList: Bool = false
     @Published var watchLimit: Double = 0.50
     @Published var criticalLimit: Double = 0.70
     /// Mirrored from Settings like `surfaceStyle`, just below.
@@ -276,8 +280,16 @@ final class NotchViewModel: ObservableObject {
         return (along - wing.lead) / max(sizeScale, 0.0001)
     }
 
+    /// Where a ring's card is centred along the panel.
+    ///
+    /// Down a side edge the card hangs from its ring, header level with it, so
+    /// the provider's name reads beside the provider's ring; it moves up only
+    /// as far as it must to stay on the screen and inside the panel. Across a
+    /// horizontal edge it is centred on the ring.
     func tooltipAlong(index: Int, length: CGFloat) -> CGFloat {
-        cardAlong(centredOn: ringAlong(index: index, in: cellWing), length: length)
+        let ring = ringAlong(index: index, in: cellWing)
+        let centre = edge.isVertical ? ring - NotchLayout.cardHeaderAnchor + length / 2 : ring
+        return cardAlong(centredOn: centre, length: length)
     }
 
     /// The notch's middle, along the panel — what the update card hangs from.
@@ -1278,11 +1290,11 @@ final class NotchViewModel: ObservableObject {
     var sessionCap: Int { sessionCap(cellCount: snapshots.count) }
 
     private var hasTokenUsage: Bool {
-        snapshots.contains { $0.tokenUsage != nil }
+        !hidesUsageStatistics && snapshots.contains { $0.tokenUsage != nil }
     }
 
     private var hasPlan: Bool {
-        snapshots.contains { $0.plan != nil }
+        !hidesUsageStatistics && snapshots.contains { $0.plan != nil }
     }
 
     private var hasResetCredits: Bool {
@@ -1304,26 +1316,42 @@ final class NotchViewModel: ObservableObject {
         CostSection.rowCount(for: snapshot)
     }
 
+    /// The height `TooltipCard` budgets for `snapshot` with its live sessions —
+    /// what the tooltip is placed by and what its hover region covers.
+    func cardHeight(for snapshot: ProviderSnapshot) -> CGFloat {
+        cardHeight(for: snapshot,
+                   sessionCount: activity(for: snapshot.id)?.sessions.count ?? 0,
+                   sessionCap: sessionCap)
+    }
+
+    /// One budget for every caller, so the drawn card, its placement and its
+    /// hover region agree on what the hover-card settings leave out.
+    private func cardHeight(for snapshot: ProviderSnapshot, sessionCount: Int,
+                            sessionCap: Int) -> CGFloat {
+        let listsSessions = snapshot.localModel == nil && !hidesSessionList
+        return NotchLayout.cardHeight(windowCount: snapshot.windows.count,
+            groupCount: snapshot.windowGroupCount,
+            moneyWindowCount: snapshot.windows.filter { $0.money != nil }.count,
+            usageDetailGroupCount: hidesUsageStatistics ? 0 : snapshot.usageDetail?.visibleGroups.count ?? 0,
+            sessionCount: listsSessions ? sessionCount : 0,
+            sessionCap: sessionCap,
+            statusMessage: snapshot.statusMessage,
+            blockMessage: snapshot.block?.summary(now: now),
+            hasTokenUsage: !hidesUsageStatistics
+                && (snapshot.tokenUsage != nil || snapshot.customUsageHistory != nil),
+            hasPlan: !hidesUsageStatistics && snapshot.plan != nil,
+            hasResetCredits: snapshot.hasAvailableResetCredits,
+            localModelName: snapshot.localModel?.name,
+            showsLocalPerformance: snapshot.showsLocalPerformance,
+            localLedgerRows: snapshot.localLedgerRowCount,
+            compactRowCount: snapshot.compactRowCount,
+            showsDeepSeekPricing: deepSeekPricingEnabled,
+            costRows: costRows(for: snapshot))
+    }
+
     private func contentCardHeight(sessionCap: Int) -> CGFloat {
-        snapshots.map { snapshot in
-            NotchLayout.cardHeight(windowCount: snapshot.windows.count,
-                groupCount: Set(snapshot.windows.compactMap(\.group)).count,
-                moneyWindowCount: snapshot.windows.filter { $0.money != nil }.count,
-                usageDetailGroupCount: snapshot.usageDetail?.visibleGroups.count ?? 0,
-                sessionCount: snapshot.localModel == nil ? sessionCap + 1 : 0,
-                sessionCap: sessionCap,
-                statusMessage: snapshot.statusMessage,
-                blockMessage: snapshot.block?.summary(now: now),
-                hasTokenUsage: snapshot.tokenUsage != nil,
-                hasPlan: snapshot.plan != nil,
-                hasResetCredits: snapshot.hasAvailableResetCredits,
-                localModelName: snapshot.localModel?.name,
-                showsLocalPerformance: snapshot.showsLocalPerformance,
-                localLedgerRows: snapshot.localLedgerRowCount,
-                compactRowCount: snapshot.compactRowCount,
-                showsDeepSeekPricing: deepSeekPricingEnabled,
-                costRows: costRows(for: snapshot))
-        }.max() ?? 0
+        snapshots.map { cardHeight(for: $0, sessionCount: sessionCap + 1, sessionCap: sessionCap) }
+            .max() ?? 0
     }
 
     func maxCardHeight(cellCount: Int) -> CGFloat {

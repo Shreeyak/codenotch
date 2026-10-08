@@ -60,6 +60,8 @@ final class NotchFleet {
     private var weeklyRing: WeeklyRing = .off
     private var weeklyRingDashed: Bool = false
     private var hidesLiveActivity: Bool = false
+    private var hidesUsageStatistics: Bool = false
+    private var hidesSessionList: Bool = false
     private var showsNotchReadings: Bool = true
     private var weeklyReading: Bool = false
     private var foldsForFullScreen = true
@@ -227,6 +229,20 @@ final class NotchFleet {
         self.hidesLiveActivity = hidesLiveActivity
         for controller in controllers.values {
             controller.model.hidesLiveActivity = hidesLiveActivity
+        }
+    }
+
+    func apply(hidesUsageStatistics: Bool) {
+        self.hidesUsageStatistics = hidesUsageStatistics
+        for controller in controllers.values {
+            controller.model.hidesUsageStatistics = hidesUsageStatistics
+        }
+    }
+
+    func apply(hidesSessionList: Bool) {
+        self.hidesSessionList = hidesSessionList
+        for controller in controllers.values {
+            controller.model.hidesSessionList = hidesSessionList
         }
     }
 
@@ -476,6 +492,8 @@ final class NotchFleet {
         controller.model.weeklyRing = weeklyRing
         controller.model.weeklyRingDashed = weeklyRingDashed
         controller.model.hidesLiveActivity = hidesLiveActivity
+        controller.model.hidesUsageStatistics = hidesUsageStatistics
+        controller.model.hidesSessionList = hidesSessionList
         controller.model.showsNotchReadings = showsNotchReadings
         controller.model.weeklyReading = weeklyReading
         controller.model.surfaceStyle = surfaceStyle

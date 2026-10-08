@@ -165,7 +165,9 @@ struct NotchRootView: View {
                         deepSeekPricingEnabled: model.deepSeekPricingEnabled,
                         deepSeekPricingSchedule: model.deepSeekPricingSchedule,
                         tailOffset: tooltipTailOffset(index: index, snapshot: snapshot),
-                        onFocusSession: model.onFocusSession
+                        onFocusSession: model.onFocusSession,
+                        hidesUsageStatistics: model.hidesUsageStatistics,
+                        hidesSessionList: model.hidesSessionList
                     )
                         // Deliberately *no* `.id` here: the card is one object
                         // that travels and resizes between cells, which reads
@@ -581,24 +583,7 @@ struct NotchRootView: View {
 
     /// The card's extent across the stack (its height on a horizontal edge).
     private func cardAcross(_ snapshot: ProviderSnapshot) -> CGFloat {
-        NotchLayout.cardHeight(
-            windowCount: snapshot.windows.count,
-            groupCount: snapshot.windowGroupCount,
-            moneyWindowCount: snapshot.windows.filter { $0.money != nil }.count,
-            usageDetailGroupCount: snapshot.usageDetail?.visibleGroups.count ?? 0,
-            sessionCount: snapshot.localModel == nil ? (model.activity(for: snapshot.id)?.sessions.count ?? 0) : 0,
-            sessionCap: model.sessionCap,
-            statusMessage: snapshot.statusMessage,
-            blockMessage: snapshot.block?.summary(now: model.now),
-            hasTokenUsage: snapshot.tokenUsage != nil,
-            hasPlan: snapshot.plan != nil,
-            hasResetCredits: snapshot.hasAvailableResetCredits,
-            localModelName: snapshot.localModel?.name,
-            showsLocalPerformance: snapshot.showsLocalPerformance,
-            localLedgerRows: snapshot.localLedgerRowCount,
-            compactRowCount: snapshot.compactRowCount,
-            showsDeepSeekPricing: model.deepSeekPricingEnabled,
-            costRows: model.costRows(for: snapshot))
+        model.cardHeight(for: snapshot)
     }
 
     private func tooltipTailOffset(index: Int, snapshot: ProviderSnapshot) -> CGFloat {

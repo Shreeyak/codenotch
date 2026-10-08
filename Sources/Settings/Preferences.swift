@@ -281,6 +281,19 @@ final class Preferences: ObservableObject {
         didSet { defaults.set(weeklyRingDashed, forKey: Keys.weeklyRingDashed) }
     }
 
+    /// Leaves the hover card's account statistics out: Codex's token totals,
+    /// streaks and 30-day chart (and the same section for a custom endpoint),
+    /// DeepSeek's usage detail, and the plan name under the title. The limits
+    /// themselves stay. Off by default.
+    @Published var hidesUsageStatistics: Bool {
+        didSet { defaults.set(hidesUsageStatistics, forKey: Keys.hidesUsageStatistics) }
+    }
+
+    /// Leaves the list of running sessions out of the hover card. Off by default.
+    @Published var hidesSessionList: Bool {
+        didSet { defaults.set(hidesSessionList, forKey: Keys.hidesSessionList) }
+    }
+
     /// Whether the reading under each ring adds the weekly ring's percentage,
     /// as "30%/70%". Only while the weekly ring is on.
     @Published var weeklyReading: Bool {
@@ -552,6 +565,8 @@ final class Preferences: ObservableObject {
         // A new key, so there is nothing under the old app name to migrate.
         static let weeklyRing = "weeklyRing"
         static let weeklyRingDashed = "weeklyRingDashed"
+        static let hidesUsageStatistics = "hidesUsageStatistics"
+        static let hidesSessionList = "hidesSessionList"
         static let showsNotchReadings = "showsNotchReadings"
         static let weeklyReading = "weeklyReading"
         static let hidesLiveActivity = "hidesLiveActivity"
@@ -894,6 +909,8 @@ final class Preferences: ObservableObject {
         // Off by default: an extra arc in a 44pt circle is a change to how
         // every reading looks, and nobody asked for it on their behalf.
         self.weeklyRingDashed = defaults.object(forKey: Keys.weeklyRingDashed) as? Bool ?? false
+        self.hidesUsageStatistics = defaults.object(forKey: Keys.hidesUsageStatistics) as? Bool ?? false
+        self.hidesSessionList = defaults.object(forKey: Keys.hidesSessionList) as? Bool ?? false
         self.showsNotchReadings = defaults.object(forKey: Keys.showsNotchReadings) as? Bool ?? true
         self.weeklyReading = defaults.object(forKey: Keys.weeklyReading) as? Bool ?? false
         self.hidesLiveActivity = defaults.object(forKey: Keys.hidesLiveActivity) as? Bool ?? false

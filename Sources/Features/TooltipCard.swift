@@ -580,6 +580,8 @@ private struct ProviderTooltip: View {
     let now: Date
     let resetTimeFormat: ResetTimeFormat
     let showUsagePace: Bool
+    /// Leaves the plan name out from under the title.
+    var hidesPlan: Bool = false
     @Environment(\.tooltipSecondaryInk) private var secondaryInk
 
     /// Only worth saying when the numbers are not current. A remembered reading
@@ -614,7 +616,7 @@ private struct ProviderTooltip: View {
             TooltipHeader(title: snapshot.kind == .localRuntime
                           ? L10n.t("\(snapshot.localModel?.brand?.displayName ?? snapshot.displayName) · Local")
                           : L10n.t("\(snapshot.displayName) Usage"),
-                          subtitle: snapshot.plan,
+                          subtitle: hidesPlan ? nil : snapshot.plan,
                           note: activityNote ?? (snapshot.localModel?.brand != nil ? snapshot.displayName : readingAge)) {
                 ProviderGlyphView(glyph: snapshot.glyph, customIconFilename: snapshot.customIconFilename)
                     .foregroundStyle(Palette.textPrimary)
@@ -1102,7 +1104,17 @@ struct TooltipCard: View {
     /// A tap on a session row jumps to that session's terminal — nil leaves
     /// the rows as plain text.
     var onFocusSession: ((pid_t) -> Void)? = nil
+    /// Leaves out the account statistics and the plan name — see
+    /// `Preferences.hidesUsageStatistics`.
+    var hidesUsageStatistics: Bool = false
+    /// Leaves out the list of running sessions.
+    var hidesSessionList: Bool = false
     @AppStorage(Preferences.showUsagePaceKey) private var showUsagePace = false
+
+    private var listedSessions: ActivitySummary? {
+        guard !hidesSessionList, snapshot.localModel == nil else { return nil }
+        return activity
+    }
 
     /// The phase a local model is in, and the queue behind it, for the header.
     /// Ollama's relay only knows thinking; LM Studio's poll names the phase.
@@ -1118,13 +1130,14 @@ struct TooltipCard: View {
             windowCount: snapshot.windows.count,
             groupCount: snapshot.windowGroupCount,
             moneyWindowCount: snapshot.windows.filter { $0.money != nil }.count,
-            usageDetailGroupCount: snapshot.usageDetail?.visibleGroups.count ?? 0,
-            sessionCount: snapshot.localModel == nil ? (activity?.sessions.count ?? 0) : 0,
+            usageDetailGroupCount: hidesUsageStatistics ? 0 : snapshot.usageDetail?.visibleGroups.count ?? 0,
+            sessionCount: listedSessions?.sessions.count ?? 0,
             sessionCap: sessionCap,
             statusMessage: snapshot.statusMessage,
             blockMessage: snapshot.block?.summary(now: now),
-            hasTokenUsage: snapshot.tokenUsage != nil || snapshot.customUsageHistory != nil,
-            hasPlan: snapshot.plan != nil,
+            hasTokenUsage: !hidesUsageStatistics
+                && (snapshot.tokenUsage != nil || snapshot.customUsageHistory != nil),
+            hasPlan: !hidesUsageStatistics && snapshot.plan != nil,
             hasResetCredits: snapshot.availableResetCredits(at: now) != nil,
             localModelName: snapshot.localModel?.name,
             showsLocalPerformance: snapshot.showsLocalPerformance,
@@ -1144,21 +1157,23 @@ struct TooltipCard: View {
             ZStack(alignment: .topLeading) {
                 VStack(alignment: .leading, spacing: 0) {
                     ProviderTooltip(activityNote: localActivityNote, snapshot: snapshot, now: now, resetTimeFormat: resetTimeFormat,
-                                    showUsagePace: showUsagePace)
+                                    showUsagePace: showUsagePace, hidesPlan: hidesUsageStatistics)
                     if let resetCredits = snapshot.availableResetCredits(at: now) {
                         UsageResetCreditsSection(credits: resetCredits, now: now)
                     }
-                    if let tokenUsage = snapshot.tokenUsage {
-                        CodexUsageSection(usage: tokenUsage, now: now)
-                    } else if let history = snapshot.customUsageHistory {
-                        CodexUsageSection(usage: history.codexUsage, now: now)
+                    if !hidesUsageStatistics {
+                        if let tokenUsage = snapshot.tokenUsage {
+                            CodexUsageSection(usage: tokenUsage, now: now)
+                        } else if let history = snapshot.customUsageHistory {
+                            CodexUsageSection(usage: history.codexUsage, now: now)
+                        }
+                        if let usageDetail = snapshot.usageDetail, usageDetail.hasUsage {
+                            DeepSeekUsageDetail(detail: usageDetail, now: now,
+                                                schedule: deepSeekPricingSchedule,
+                                                showsPricing: deepSeekPricingEnabled)
+                        }
                     }
-                    if let usageDetail = snapshot.usageDetail, usageDetail.hasUsage {
-                        DeepSeekUsageDetail(detail: usageDetail, now: now,
-                                            schedule: deepSeekPricingSchedule,
-                                            showsPricing: deepSeekPricingEnabled)
-                    }
-                    if let activity, snapshot.localModel == nil {
+                    if let activity = listedSessions {
                         SessionList(summary: activity, now: now, cap: sessionCap,
                                     onFocus: onFocusSession)
                     }

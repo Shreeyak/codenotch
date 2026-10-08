@@ -1043,6 +1043,20 @@ struct SettingsView: View {
                 }
             }
 
+            Section(L10n.t("Hover card")) {
+                Toggle(L10n.t("Hide usage statistics"), isOn: $preferences.hidesUsageStatistics)
+                Text(L10n.t("Hides token totals, streaks, the 30-day chart and the plan name."))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Toggle(L10n.t("Hide running sessions"), isOn: $preferences.hidesSessionList)
+                Text(L10n.t("Hides the list of running sessions."))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
             Section(L10n.t("Usage Limits")) {
                 VStack(alignment: .leading, spacing: 4) {
                     Picker(L10n.t("Colour transition"), selection: $preferences.colorTransitionStyle) {
