@@ -255,6 +255,21 @@ final class NotchWindowController {
             .sink { [weak self] _ in self?.relocate() }
             .store(in: &cancellables)
 
+        // The "30%/70%" pair widens the column a top or bottom bar gives each
+        // reading, so these lengthen the bar with the snapshots unchanged.
+        // On the run loop for the same reason as the snapshots.
+        Publishers.Merge(
+            model.$weeklyRing.removeDuplicates().map { _ in () },
+            model.$weeklyReading.removeDuplicates().map { _ in () }
+        )
+        .dropFirst(2)
+        .receive(on: RunLoop.main)
+        .sink { [weak self] in
+            self?.relocate()
+            self?.updateInteractiveRects()
+        }
+        .store(in: &cancellables)
+
         // No `receive(on:)`: the appearance has to be on the window before the
         // next draw, or the frame's hexes and the glass would be resolved
         // against the appearance the panel is about to stop having.
