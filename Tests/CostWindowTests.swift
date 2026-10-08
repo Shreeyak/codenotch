@@ -16,7 +16,7 @@ final class CostWindowTests: XCTestCase {
          "secondary_window":null},
          "code_review_rate_limit":null,"additional_rate_limits":null}
         """
-        let windows = try CodexUsage.windows(from: Data(payload.utf8), includeExtras: true)
+        let windows = try CodexUsage.windows(from: Data(payload.utf8))
         let primary = try XCTUnwrap(windows.first { $0.id == "primary" })
         XCTAssertEqual(CostModel.costWindow(for: primary), .weekly)
     }
@@ -27,7 +27,7 @@ final class CostWindowTests: XCTestCase {
          "primary_window":{"used_percent":10,"limit_window_seconds":18000,"reset_after_seconds":3600},
          "secondary_window":{"used_percent":40,"limit_window_seconds":604800,"reset_after_seconds":86400}}}
         """
-        let windows = try CodexUsage.windows(from: Data(payload.utf8), includeExtras: true)
+        let windows = try CodexUsage.windows(from: Data(payload.utf8))
         let filed = Dictionary(uniqueKeysWithValues: windows.map { ($0.id, CostModel.costWindow(for: $0)) })
         XCTAssertEqual(filed["primary"], .session)
         XCTAssertEqual(filed["secondary"], .weekly)
