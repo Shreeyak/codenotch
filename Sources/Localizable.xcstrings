@@ -1,6 +1,40 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "Disable Live Activity Indicator": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": { "stringUnit": { "state": "translated", "value": "Live-Aktivitätsanzeige deaktivieren" } },
+        "fr": { "stringUnit": { "state": "translated", "value": "Désactiver l'indicateur d'activité en direct" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Nonaktifkan Indikator Aktivitas Langsung" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "ライブアクティビティ表示をオフにする" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "실시간 활동 표시 끄기" } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Desativar indicador de atividade ao vivo" } },
+        "ru": { "stringUnit": { "state": "translated", "value": "Отключить индикатор активности" } },
+        "tr": { "stringUnit": { "state": "translated", "value": "Canlı Etkinlik Göstergesini Kapat" } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Вимкнути індикатор активності" } },
+        "uz": { "stringUnit": { "state": "translated", "value": "Jonli faollik koʻrsatkichini oʻchirish" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "停用实时活动指示" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "停用即時活動指示" } }
+      }
+    },
+    "Disables the turning arc and pulsing indicators for running agents.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": { "stringUnit": { "state": "translated", "value": "Blendet den drehenden Bogen und die pulsierenden Anzeigen für laufende Agenten aus." } },
+        "fr": { "stringUnit": { "state": "translated", "value": "Désactive l'arc tournant et les indicateurs pulsés des agents en cours." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Menonaktifkan busur berputar dan indikator berdenyut untuk agen yang berjalan." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "実行中のエージェントの回転する弧と点滅する表示をオフにします。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "실행 중인 에이전트의 회전하는 호와 깜박이는 표시를 끕니다." } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Desativa o arco giratório e os indicadores pulsantes dos agentes em execução." } },
+        "ru": { "stringUnit": { "state": "translated", "value": "Отключает вращающуюся дугу и пульсирующие индикаторы работающих агентов." } },
+        "tr": { "stringUnit": { "state": "translated", "value": "Çalışan ajanlar için dönen yayı ve yanıp sönen göstergeleri kapatır." } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Вимикає дугу, що обертається, і пульсуючі індикатори запущених агентів." } },
+        "uz": { "stringUnit": { "state": "translated", "value": "Ishlayotgan agentlar uchun aylanuvchi yoy va miltillovchi koʻrsatkichlarni oʻchiradi." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "停用运行中代理的旋转弧线和脉动指示。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "停用執行中代理的旋轉弧線和脈動指示。" } }
+      }
+    },
     "Qoder reported no credit allowance": {
       "extractionState": "manual",
       "localizations": {
