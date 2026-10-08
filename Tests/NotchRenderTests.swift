@@ -1118,6 +1118,10 @@ final class ReadingToggleRelaysThePanelOutTests: XCTestCase {
         controller.apply(edge: .bottom)
         controller.model.isExpanded = true
         controller.apply(showsNotchReadings: true)
+        // Moving to the bottom edge schedules a relayout of its own a moment
+        // later. Let it land first, so the switch below is the only thing
+        // that can lay the window out again.
+        RunLoop.main.run(until: Date().addingTimeInterval(1))
 
         for pair in [true, false, true] {
             controller.model.weeklyRing = pair ? .inside : .off
