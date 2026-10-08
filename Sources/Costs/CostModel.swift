@@ -76,21 +76,29 @@ final class CostModel: ObservableObject {
         reload()
     }
 
+    /// Which allowance a usage window measures. Codenotch's windows carry ids:
+    /// "session"/"primary" are the rolling session, "weekly_all"/"secondary"
+    /// the week, anything named credits the credit cap of a Business seat.
+    /// Codex's ids are positions, not lengths: a plan with a weekly limit and
+    /// no five-hour one (Pro Lite) sends the week as "primary", so a stated
+    /// length of a day or more decides it.
+    static func costWindow(for w: LimitWindow) -> CostWindow? {
+        switch w.id {
+        case "session", "primary":
+            if let duration = w.duration, duration >= 86400 { return .weekly }
+            return .session
+        case "weekly_all", "weekly", "secondary": return .weekly
+        default:
+            if w.id.lowercased().contains("credit") || w.label.lowercased().contains("credit") { return .credits }
+            return nil
+        }
+    }
+
     /// Called after every usage poll. Samples the limit and attributes any increase.
-    /// Codenotch's windows carry ids: "session"/"primary" are the rolling
-    /// session, "weekly_all"/"secondary" the week, anything named credits the
-    /// credit cap of a Business seat.
     func observe(_ snapshots: [ProviderSnapshot]) {
         guard let store, let snap = snapshots.first(where: { $0.id == account.id }) else { return }
         let samples: [(window: CostWindow, pct: Double, resetsAt: Date?)] = snap.windows.compactMap { w in
-            guard let f = w.usedFraction else { return nil }
-            let window: CostWindow
-            switch w.id {
-            case "session", "primary": window = .session
-            case "weekly_all", "weekly", "secondary": window = .weekly
-            default:
-                if w.id.lowercased().contains("credit") || w.label.lowercased().contains("credit") { window = .credits } else { return nil }
-            }
+            guard let f = w.usedFraction, let window = Self.costWindow(for: w) else { return nil }
             if window == .credits, let used = w.used, let remaining = w.remaining {
                 CostAccountStore.shared.setCreditLimit(account.id, Double(used + remaining))
             }
