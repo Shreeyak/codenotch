@@ -255,6 +255,21 @@ final class NotchWindowController {
             .sink { [weak self] _ in self?.relocate() }
             .store(in: &cancellables)
 
+        // What the hover card leaves out changes the tallest card, and the
+        // panel's room past each end of a side stack is sized from it — with
+        // the snapshots unchanged. On the run loop for the same reason.
+        Publishers.Merge(
+            model.$hidesUsageStatistics.removeDuplicates().map { _ in () },
+            model.$hidesSessionList.removeDuplicates().map { _ in () }
+        )
+        .dropFirst(2)
+        .receive(on: RunLoop.main)
+        .sink { [weak self] in
+            self?.relocate()
+            self?.updateInteractiveRects()
+        }
+        .store(in: &cancellables)
+
         // No `receive(on:)`: the appearance has to be on the window before the
         // next draw, or the frame's hexes and the glass would be resolved
         // against the appearance the panel is about to stop having.

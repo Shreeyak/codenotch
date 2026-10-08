@@ -1077,4 +1077,24 @@ final class ReadingToggleRelaysThePanelOutTests: XCTestCase {
                            + "where the notch needs \(controller.model.panelSize.width)pt")
         }
     }
+
+    /// Hiding the session list shortens the tallest card, and down a side
+    /// edge the window's room past each end of the stack is half that card —
+    /// so the switch resizes the window with no new snapshot to relocate on.
+    func testHidingTheSessionListRelaysASideStackOut() throws {
+        let controller = NotchWindowController()
+        controller.show()
+        defer { controller.stop() }
+        controller.model.updateSnapshots(Array(Fixtures.snapshots().prefix(3)))
+        controller.model.isExpanded = true
+
+        for hidden in [true, false, true] {
+            controller.model.hidesSessionList = hidden
+            RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+            let panel = try XCTUnwrap(controller.panelContentViewForTesting?.window?.frame.height)
+            XCTAssertEqual(panel, controller.model.panelSize.height, accuracy: 1,
+                           "with the session list \(hidden ? "hidden" : "shown") the panel is "
+                           + "\(panel)pt where the notch needs \(controller.model.panelSize.height)pt")
+        }
+    }
 }
