@@ -69,6 +69,91 @@
         "zh-Hant": { "stringUnit": { "state": "translated", "value": "左右兩側的數字在每個圓環下方，頂部和底部的數字在圓環旁邊。關掉後只剩圓環；把指標停上去，卡片裡仍能看到數字。" } }
       }
     },
+    "Details Shown": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": { "stringUnit": { "state": "translated", "value": "Angezeigte Details" } },
+        "fr": { "stringUnit": { "state": "translated", "value": "Détails affichés" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Detail yang Ditampilkan" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "表示する詳細" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "표시할 세부 정보" } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Detalhes exibidos" } },
+        "ru": { "stringUnit": { "state": "translated", "value": "Показываемые сведения" } },
+        "tr": { "stringUnit": { "state": "translated", "value": "Gösterilen Ayrıntılar" } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Показані відомості" } },
+        "uz": { "stringUnit": { "state": "translated", "value": "Koʻrsatiladigan tafsilotlar" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "显示的详细信息" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "顯示的詳細資訊" } }
+      }
+    },
+    "Hide usage statistics": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": { "stringUnit": { "state": "translated", "value": "Nutzungsstatistiken ausblenden" } },
+        "fr": { "stringUnit": { "state": "translated", "value": "Masquer les statistiques d'utilisation" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Sembunyikan statistik penggunaan" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "使用統計を隠す" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "사용 통계 숨기기" } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Ocultar estatísticas de uso" } },
+        "ru": { "stringUnit": { "state": "translated", "value": "Скрыть статистику использования" } },
+        "tr": { "stringUnit": { "state": "translated", "value": "Kullanım istatistiklerini gizle" } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Сховати статистику використання" } },
+        "uz": { "stringUnit": { "state": "translated", "value": "Foydalanish statistikasini yashirish" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "隐藏用量统计" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "隱藏用量統計" } }
+      }
+    },
+    "Hides token totals, streaks, the 30-day chart and the plan name.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": { "stringUnit": { "state": "translated", "value": "Blendet Token-Summen, Serien, das 30-Tage-Diagramm und den Tarifnamen aus." } },
+        "fr": { "stringUnit": { "state": "translated", "value": "Masque les totaux de jetons, les séries, le graphique sur 30 jours et le nom de l'offre." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Menyembunyikan total token, runtutan, grafik 30 hari, dan nama paket." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "トークン合計、連続日数、30 日間のグラフ、プラン名を隠します。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "토큰 합계, 연속 사용 일수, 30일 차트, 요금제 이름을 숨깁니다." } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Oculta os totais de tokens, as sequências, o gráfico de 30 dias e o nome do plano." } },
+        "ru": { "stringUnit": { "state": "translated", "value": "Скрывает суммы токенов, серии, график за 30 дней и название тарифа." } },
+        "tr": { "stringUnit": { "state": "translated", "value": "Token toplamlarını, serileri, 30 günlük grafiği ve plan adını gizler." } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Ховає суми токенів, серії, графік за 30 днів і назву тарифу." } },
+        "uz": { "stringUnit": { "state": "translated", "value": "Token jamlari, seriyalar, 30 kunlik grafik va tarif nomini yashiradi." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "隐藏 token 总量、连续天数、30 天图表和方案名称。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "隱藏 token 總量、連續天數、30 天圖表和方案名稱。" } }
+      }
+    },
+    "Hide running sessions": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": { "stringUnit": { "state": "translated", "value": "Laufende Sitzungen ausblenden" } },
+        "fr": { "stringUnit": { "state": "translated", "value": "Masquer les sessions en cours" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Sembunyikan sesi yang berjalan" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "実行中のセッションを隠す" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "실행 중인 세션 숨기기" } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Ocultar sessões em execução" } },
+        "ru": { "stringUnit": { "state": "translated", "value": "Скрыть активные сеансы" } },
+        "tr": { "stringUnit": { "state": "translated", "value": "Çalışan oturumları gizle" } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Сховати активні сесії" } },
+        "uz": { "stringUnit": { "state": "translated", "value": "Ishlayotgan seanslarni yashirish" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "隐藏运行中的会话" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "隱藏執行中的工作階段" } }
+      }
+    },
+    "Hides the list of running sessions.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": { "stringUnit": { "state": "translated", "value": "Blendet die Liste der laufenden Sitzungen aus." } },
+        "fr": { "stringUnit": { "state": "translated", "value": "Masque la liste des sessions en cours." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Menyembunyikan daftar sesi yang berjalan." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "実行中のセッションの一覧を隠します。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "실행 중인 세션 목록을 숨깁니다." } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Oculta a lista de sessões em execução." } },
+        "ru": { "stringUnit": { "state": "translated", "value": "Скрывает список активных сеансов." } },
+        "tr": { "stringUnit": { "state": "translated", "value": "Çalışan oturumların listesini gizler." } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Ховає список активних сесій." } },
+        "uz": { "stringUnit": { "state": "translated", "value": "Ishlayotgan seanslar roʻyxatini yashiradi." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "隐藏运行中会话的列表。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "隱藏執行中工作階段的列表。" } }
+      }
+    },
     "Qoder reported no credit allowance": {
       "extractionState": "manual",
       "localizations": {

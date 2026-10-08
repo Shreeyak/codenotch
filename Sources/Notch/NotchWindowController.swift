@@ -255,14 +255,19 @@ final class NotchWindowController {
             .sink { [weak self] _ in self?.relocate() }
             .store(in: &cancellables)
 
-        // The "30%/70%" pair widens the column a top or bottom bar gives each
-        // reading, so these lengthen the bar with the snapshots unchanged.
-        // On the run loop for the same reason as the snapshots.
-        Publishers.Merge(
+        // Settings that resize the notch with the snapshots unchanged. The
+        // "30%/70%" pair widens the column a top or bottom bar gives each
+        // reading, so it lengthens the bar; what the hover card leaves out
+        // changes the tallest card, which the panel's room past each end of a
+        // side stack is sized from. On the run loop for the same reason as the
+        // snapshots.
+        Publishers.Merge4(
             model.$weeklyRing.removeDuplicates().map { _ in () },
-            model.$weeklyReading.removeDuplicates().map { _ in () }
+            model.$weeklyReading.removeDuplicates().map { _ in () },
+            model.$hidesUsageStatistics.removeDuplicates().map { _ in () },
+            model.$hidesSessionList.removeDuplicates().map { _ in () }
         )
-        .dropFirst(2)
+        .dropFirst(4)
         .receive(on: RunLoop.main)
         .sink { [weak self] in
             self?.relocate()

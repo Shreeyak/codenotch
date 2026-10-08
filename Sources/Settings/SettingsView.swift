@@ -1043,7 +1043,7 @@ struct SettingsView: View {
                 }
             }
 
-            Section(L10n.t("Hover card")) {
+            Section(L10n.t("Details Shown")) {
                 Toggle(L10n.t("Hide usage statistics"), isOn: $preferences.hidesUsageStatistics)
                 Text(L10n.t("Hides token totals, streaks, the 30-day chart and the plan name."))
                     .font(.caption)
