@@ -211,6 +211,7 @@ final class NotchViewModel: ObservableObject {
     /// height budget reads these too, so the hover region matches the card.
     @Published var hidesUsageStatistics: Bool = false
     @Published var hidesSessionList: Bool = false
+    @Published var hidesProjectCosts: Bool = false
     @Published var watchLimit: Double = 0.50
     @Published var criticalLimit: Double = 0.70
     /// Mirrored from Settings like `surfaceStyle`, just below.
@@ -1275,9 +1276,9 @@ final class NotchViewModel: ObservableObject {
     }
 
     /// Project rows a card may list: the ones the cost model has, capped at
-    /// what the section draws.
+    /// what the section draws. None when Settings hides project costs.
     func costRows(for snapshot: ProviderSnapshot) -> Int {
-        CostSection.rowCount(for: snapshot)
+        hidesProjectCosts ? 0 : CostSection.rowCount(for: snapshot)
     }
 
     /// The height `TooltipCard` budgets for `snapshot` with its live sessions —

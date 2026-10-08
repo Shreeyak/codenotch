@@ -1051,6 +1051,12 @@ struct SettingsView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
+
+                Toggle(L10n.t("Hide project costs"), isOn: $preferences.hidesProjectCosts)
+                Text(L10n.t("Hides each project's share of the allowance and what it cost."))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             Section(L10n.t("Usage Limits")) {

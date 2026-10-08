@@ -258,11 +258,12 @@ final class NotchWindowController {
         // What the hover card leaves out changes the tallest card, and the
         // panel's room past each end of a side stack is sized from it — with
         // the snapshots unchanged. On the run loop for the same reason.
-        Publishers.Merge(
+        Publishers.Merge3(
             model.$hidesUsageStatistics.removeDuplicates().map { _ in () },
-            model.$hidesSessionList.removeDuplicates().map { _ in () }
+            model.$hidesSessionList.removeDuplicates().map { _ in () },
+            model.$hidesProjectCosts.removeDuplicates().map { _ in () }
         )
-        .dropFirst(2)
+        .dropFirst(3)
         .receive(on: RunLoop.main)
         .sink { [weak self] in
             self?.relocate()

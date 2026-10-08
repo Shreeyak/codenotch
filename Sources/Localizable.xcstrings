@@ -86,6 +86,40 @@
         "zh-Hant": { "stringUnit": { "state": "translated", "value": "隱藏執行中工作階段的列表。" } }
       }
     },
+    "Hide project costs": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": { "stringUnit": { "state": "translated", "value": "Projektkosten ausblenden" } },
+        "fr": { "stringUnit": { "state": "translated", "value": "Masquer les coûts par projet" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Sembunyikan biaya proyek" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "プロジェクト別のコストを隠す" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "프로젝트별 비용 숨기기" } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Ocultar custos por projeto" } },
+        "ru": { "stringUnit": { "state": "translated", "value": "Скрыть затраты по проектам" } },
+        "tr": { "stringUnit": { "state": "translated", "value": "Proje maliyetlerini gizle" } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Сховати витрати за проєктами" } },
+        "uz": { "stringUnit": { "state": "translated", "value": "Loyiha xarajatlarini yashirish" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "隐藏项目费用" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "隱藏專案費用" } }
+      }
+    },
+    "Hides each project's share of the allowance and what it cost.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": { "stringUnit": { "state": "translated", "value": "Blendet den Anteil jedes Projekts am Kontingent und seine Kosten aus." } },
+        "fr": { "stringUnit": { "state": "translated", "value": "Masque la part du quota utilisée par chaque projet et son coût." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Menyembunyikan porsi kuota tiap proyek dan biayanya." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "各プロジェクトが使った利用枠の割合とそのコストを隠します。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "프로젝트별 사용 한도 비율과 비용을 숨깁니다." } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Oculta a parte da cota usada por cada projeto e quanto custou." } },
+        "ru": { "stringUnit": { "state": "translated", "value": "Скрывает долю лимита каждого проекта и её стоимость." } },
+        "tr": { "stringUnit": { "state": "translated", "value": "Her projenin kotadaki payını ve maliyetini gizler." } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Ховає частку ліміту кожного проєкту та її вартість." } },
+        "uz": { "stringUnit": { "state": "translated", "value": "Har bir loyihaning limitdagi ulushi va narxini yashiradi." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "隐藏每个项目占用的额度及其费用。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "隱藏每個專案佔用的額度及其費用。" } }
+      }
+    },
     "Qoder reported no credit allowance": {
       "extractionState": "manual",
       "localizations": {

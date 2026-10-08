@@ -294,6 +294,12 @@ final class Preferences: ObservableObject {
         didSet { defaults.set(hidesSessionList, forKey: Keys.hidesSessionList) }
     }
 
+    /// Leaves each project's share of the allowance and its cost out of the
+    /// hover card. Off by default.
+    @Published var hidesProjectCosts: Bool {
+        didSet { defaults.set(hidesProjectCosts, forKey: Keys.hidesProjectCosts) }
+    }
+
     /// Whether the reading under each ring adds the weekly ring's percentage,
     /// as "30%/70%". Only while the weekly ring is on.
     @Published var weeklyReading: Bool {
@@ -559,6 +565,7 @@ final class Preferences: ObservableObject {
         static let weeklyRingDashed = "weeklyRingDashed"
         static let hidesUsageStatistics = "hidesUsageStatistics"
         static let hidesSessionList = "hidesSessionList"
+        static let hidesProjectCosts = "hidesProjectCosts"
         static let showsNotchReadings = "showsNotchReadings"
         static let weeklyReading = "weeklyReading"
         static let claudeDailyPaceRing = "claudeDailyPaceRing"
@@ -902,6 +909,7 @@ final class Preferences: ObservableObject {
         self.weeklyRingDashed = defaults.object(forKey: Keys.weeklyRingDashed) as? Bool ?? false
         self.hidesUsageStatistics = defaults.object(forKey: Keys.hidesUsageStatistics) as? Bool ?? false
         self.hidesSessionList = defaults.object(forKey: Keys.hidesSessionList) as? Bool ?? false
+        self.hidesProjectCosts = defaults.object(forKey: Keys.hidesProjectCosts) as? Bool ?? false
         self.showsNotchReadings = defaults.object(forKey: Keys.showsNotchReadings) as? Bool ?? true
         self.weeklyReading = defaults.object(forKey: Keys.weeklyReading) as? Bool ?? false
 
