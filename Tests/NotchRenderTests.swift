@@ -1054,10 +1054,10 @@ final class PanelFollowsTheNotchAfterAnEdgeChangeTests: XCTestCase {
 /// Settings that change the notch's size have to relay the window out with it.
 @MainActor
 final class ReadingToggleRelaysThePanelOutTests: XCTestCase {
-    /// Beside the hardware the reading is paid for out of ring size, so
-    /// turning it on changes the strip's length and the window around it. Set
-    /// without relocating, the window kept its old width and the shape — which
-    /// centres itself in it — slid away from the settings arc and the tooltip.
+    /// Beside the hardware the reading sits beside each ring, so turning it on
+    /// changes the strip's length and the window around it. Set without
+    /// relocating, the window kept its old width and the shape — which centres
+    /// itself in it — slid away from the settings arc and the tooltip.
     func testTogglingTheReadingKeepsThePanelWithTheNotch() throws {
         guard NSScreen.screens.contains(where: { $0.hardwareNotch != nil }) else {
             throw XCTSkip("Needs a display with a notch")
@@ -1074,6 +1074,29 @@ final class ReadingToggleRelaysThePanelOutTests: XCTestCase {
             let panel = try XCTUnwrap(controller.panelContentViewForTesting?.window?.frame.width)
             XCTAssertEqual(panel, controller.model.panelSize.width, accuracy: 1,
                            "with readings \(on ? "on" : "off") the panel is \(panel)pt "
+                           + "where the notch needs \(controller.model.panelSize.width)pt")
+        }
+    }
+
+    /// The "30%/70%" pair widens each reading's column across the bottom
+    /// edge, so switching it lengthens the bar with no new snapshot to
+    /// relocate on.
+    func testTheWeeklyPairRelaysABottomBarOut() throws {
+        let controller = NotchWindowController()
+        controller.show()
+        defer { controller.stop() }
+        controller.model.updateSnapshots(Array(Fixtures.snapshots().prefix(3)))
+        controller.apply(edge: .bottom)
+        controller.model.isExpanded = true
+        controller.apply(showsNotchReadings: true)
+
+        for pair in [true, false, true] {
+            controller.model.weeklyRing = pair ? .inside : .off
+            controller.model.weeklyReading = pair
+            RunLoop.main.run(until: Date().addingTimeInterval(0.05))
+            let panel = try XCTUnwrap(controller.panelContentViewForTesting?.window?.frame.width)
+            XCTAssertEqual(panel, controller.model.panelSize.width, accuracy: 1,
+                           "with the pair \(pair ? "on" : "off") the panel is \(panel)pt "
                            + "where the notch needs \(controller.model.panelSize.width)pt")
         }
     }

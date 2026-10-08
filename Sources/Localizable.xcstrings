@@ -1,6 +1,40 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "Percentage with each ring": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": { "stringUnit": { "state": "translated", "value": "Prozentwert an jedem Ring" } },
+        "fr": { "stringUnit": { "state": "translated", "value": "Pourcentage à côté de chaque anneau" } },
+        "id": { "stringUnit": { "state": "translated", "value": "Persentase di setiap cincin" } },
+        "ja": { "stringUnit": { "state": "translated", "value": "各リングに割合を表示" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "각 링에 백분율 표시" } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "Porcentagem junto a cada anel" } },
+        "ru": { "stringUnit": { "state": "translated", "value": "Процент у каждого кольца" } },
+        "tr": { "stringUnit": { "state": "translated", "value": "Her halkanın yanında yüzde" } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Відсоток біля кожного кільця" } },
+        "uz": { "stringUnit": { "state": "translated", "value": "Har bir halqa yonida foiz" } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "每个圆环旁的百分比" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "每個圓環旁的百分比" } }
+      }
+    },
+    "The figure under each ring on the sides, beside it on the top and bottom. Turn it off for rings alone; the number is still a hover away in the card.": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": { "stringUnit": { "state": "translated", "value": "Die Zahl steht an den Seiten unter jedem Ring, oben und unten daneben. Aus lässt nur die Ringe stehen; die Zahl bleibt beim Darüberfahren in der Karte sichtbar." } },
+        "fr": { "stringUnit": { "state": "translated", "value": "Le chiffre sous chaque anneau sur les côtés, à côté en haut et en bas. Désactivez-le pour n'afficher que les anneaux ; le nombre reste visible dans la carte au survol." } },
+        "id": { "stringUnit": { "state": "translated", "value": "Angka di bawah setiap cincin di sisi kiri dan kanan, di sampingnya di atas dan bawah. Matikan untuk cincin saja; angkanya tetap terlihat di kartu saat diarahkan." } },
+        "ja": { "stringUnit": { "state": "translated", "value": "左右の端では各リングの下に、上下の端ではリングの横に数値を表示します。オフにするとリングだけになり、数値はポインタを重ねるとカードで確認できます。" } },
+        "ko": { "stringUnit": { "state": "translated", "value": "좌우 가장자리에서는 각 링 아래에, 위아래 가장자리에서는 링 옆에 숫자를 표시합니다. 끄면 링만 남고, 숫자는 포인터를 올리면 카드에서 볼 수 있습니다." } },
+        "pt-BR": { "stringUnit": { "state": "translated", "value": "O número fica sob cada anel nas laterais e ao lado dele em cima e embaixo. Desative para ver só os anéis; o número continua no cartão ao passar o ponteiro." } },
+        "ru": { "stringUnit": { "state": "translated", "value": "Число под каждым кольцом по бокам экрана и рядом с ним сверху и снизу. Выключите, чтобы остались только кольца; число по-прежнему видно в карточке при наведении." } },
+        "tr": { "stringUnit": { "state": "translated", "value": "Sayı yan kenarlarda her halkanın altında, üst ve alt kenarlarda yanında. Yalnızca halkalar için kapatın; sayı üzerine gelince kartta görünmeye devam eder." } },
+        "uk": { "stringUnit": { "state": "translated", "value": "Число під кожним кільцем на бічних краях і поруч із ним угорі та внизу. Вимкніть, щоб лишилися самі кільця; число й далі видно в картці при наведенні." } },
+        "uz": { "stringUnit": { "state": "translated", "value": "Yon chetlarda raqam har bir halqa ostida, yuqori va pastda esa yonida. Faqat halqalar qolishi uchun oʻchiring; raqam kursor olib borilganda kartada koʻrinib turadi." } },
+        "zh-Hans": { "stringUnit": { "state": "translated", "value": "左右两侧的数字在每个圆环下方，顶部和底部的数字在圆环旁边。关掉后只剩圆环；把指针停上去，卡片里仍能看到数字。" } },
+        "zh-Hant": { "stringUnit": { "state": "translated", "value": "左右兩側的數字在每個圓環下方，頂部和底部的數字在圓環旁邊。關掉後只剩圓環；把指標停上去，卡片裡仍能看到數字。" } }
+      }
+    },
     "Qoder reported no credit allowance": {
       "extractionState": "manual",
       "localizations": {
